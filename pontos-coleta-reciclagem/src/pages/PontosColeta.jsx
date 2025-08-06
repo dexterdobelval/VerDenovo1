@@ -1,4 +1,8 @@
+import { useState } from 'react';
+
 function PontosColeta() {
+  const [pontoSelecionado, setPontoSelecionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
   
   const pontosExemplo = [
     {
@@ -76,7 +80,13 @@ function PontosColeta() {
 
 
   const acessarPonto = (ponto) => {
-    alert(`Acessando ${ponto.nome}\nEndereço: ${ponto.endereco}, ${ponto.cidade}`);
+    setPontoSelecionado(ponto);
+    setMostrarModal(true);
+  };
+
+  const fecharModal = () => {
+    setMostrarModal(false);
+    setPontoSelecionado(null);
   };
 
   const entrarEmContato = (ponto) => {
@@ -163,6 +173,93 @@ function PontosColeta() {
           </div>
         ))}
       </div>
+
+      {/* Modal */}
+      {mostrarModal && pontoSelecionado && (
+        <div className="modal d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-success text-white">
+                <h5 className="modal-title">
+                  <i className="bi bi-geo-alt me-2"></i>
+                  {pontoSelecionado.nome}
+                </h5>
+                <button type="button" className="btn-close btn-close-white" onClick={fecharModal}></button>
+              </div>
+              <div className="modal-body p-4">
+                <div className="row">
+                  <div className="col-md-6">
+                    <h6 className="text-success mb-3">Informações de Contato</h6>
+                    <div className="mb-3">
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="bi bi-house text-success me-3"></i>
+                        <div>
+                          <strong>Endereço:</strong><br/>
+                          <span className="text-muted">{pontoSelecionado.endereco}</span>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="bi bi-geo text-success me-3"></i>
+                        <div>
+                          <strong>Cidade:</strong><br/>
+                          <span className="text-muted">{pontoSelecionado.cidade}</span>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="bi bi-mailbox text-success me-3"></i>
+                        <div>
+                          <strong>CEP:</strong><br/>
+                          <span className="text-muted">{pontoSelecionado.cep}</span>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="bi bi-telephone text-success me-3"></i>
+                        <div>
+                          <strong>Telefone:</strong><br/>
+                          <span className="text-muted">{pontoSelecionado.telefone}</span>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <i className="bi bi-clock text-success me-3"></i>
+                        <div>
+                          <strong>Horário:</strong><br/>
+                          <span className="text-muted">{pontoSelecionado.horario}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <h6 className="text-success mb-3">Materiais Aceitos</h6>
+                    <div className="d-flex flex-wrap gap-2 mb-4">
+                      {formatarMateriais(pontoSelecionado.materiais).split(', ').map((material, index) => (
+                        <span key={index} className="badge bg-success fs-6 px-3 py-2">
+                          <i className="bi bi-check-circle me-1"></i>
+                          {material}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="bg-light p-3 rounded">
+                      <h6 className="text-success mb-2">
+                        <i className="bi bi-info-circle me-2"></i>
+                        Status
+                      </h6>
+                      <span className="badge bg-success fs-6 px-3 py-2">
+                        <i className="bi bi-check-circle me-1"></i>
+                        Ponto Ativo
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-success" onClick={fecharModal}>
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
