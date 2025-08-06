@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function LoginEmpresa() {
   const navigate = useNavigate();
+  const { loginEmpresa } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     senha: ''
@@ -17,6 +19,7 @@ function LoginEmpresa() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    loginEmpresa(formData);
     alert('Login realizado com sucesso!');
     navigate('/personalizar-empresa');
   };

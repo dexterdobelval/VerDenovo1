@@ -107,50 +107,6 @@ function Sobre() {
         </div>
       </div>
 
-      {/* Conscientização */}
-      <div className="row mb-5">
-        <div className="col-12">
-          <div className="card shadow-sm">
-            <div className="card-header bg-warning text-dark">
-              <h3 className="mb-0">
-                <i className="bi bi-lightbulb me-2"></i>
-                Conscientização e Educação Ambiental
-              </h3>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-4 text-center mb-4">
-                  <i className="bi bi-recycle display-1 text-success mb-3"></i>
-                  <h5 className="text-success">Reciclagem</h5>
-                  <p>
-                    Promovemos a importância da reciclagem como ferramenta fundamental para reduzir o impacto ambiental e criar uma economia mais circular e sustentável.
-                  </p>
-                </div>
-                <div className="col-md-4 text-center mb-4">
-                  <i className="bi bi-tree display-1 text-success mb-3"></i>
-                  <h5 className="text-success">Sustentabilidade</h5>
-                  <p>
-                    Educamos sobre práticas sustentáveis no dia a dia, mostrando como pequenas ações individuais podem gerar grandes transformações coletivas.
-                  </p>
-                </div>
-                <div className="col-md-4 text-center mb-4">
-                  <i className="bi bi-globe display-1 text-success mb-3"></i>
-                  <h5 className="text-success">Meio Ambiente</h5>
-                  <p>
-                    Conscientizamos sobre a importância de preservar nosso meio ambiente para as futuras gerações, promovendo o cuidado com nosso planeta.
-                  </p>
-                </div>
-              </div>
-              <div className="text-center mt-4">
-                <p className="lead text-muted">
-                  "Acreditamos que a educação ambiental é a chave para construir um futuro mais verde e sustentável para todos."
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Call to Action */}
       <div className="row">
         <div className="col-12">

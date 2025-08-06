@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function CadastroEmpresa() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nomeEmpresa: '',
     cnpj: '',
@@ -28,6 +30,9 @@ function CadastroEmpresa() {
     }
     alert('Empresa cadastrada com sucesso!');
     console.log('Dados da empresa:', formData);
+    setTimeout(() => {
+      navigate('/login-empresa');
+    }, 2000);
   };
 
   return (

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function LoginPonto() {
   const navigate = useNavigate();
+  const { loginPonto } = useAuth();
   const [formData, setFormData] = useState({
     codigo: '',
     senha: ''
@@ -17,6 +19,7 @@ function LoginPonto() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    loginPonto(formData);
     alert('Acesso ao ponto realizado com sucesso!');
     navigate('/personalizar-ponto');
   };

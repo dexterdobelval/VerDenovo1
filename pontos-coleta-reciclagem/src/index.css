@@ -1,169 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f7f5f3;
-  min-height: 100vh;
 }
 
-.card {
-  border: none !important;
-  border-radius: 15px !important;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.15) !important;
-}
-
-.btn {
-  border-radius: 25px !important;
-  padding: 10px 25px !important;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.btn-success {
-  background: linear-gradient(45deg, #28a745, #20c997) !important;
-  border: none !important;
-}
-
-.btn-success:hover {
-  background: linear-gradient(45deg, #218838, #1ea085) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-}
-
-.btn-outline-success {
-  border: 2px solid #28a745 !important;
-  color: #28a745 !important;
-  background: transparent !important;
-}
-
-.btn-outline-success:hover {
-  background: linear-gradient(45deg, #28a745, #20c997) !important;
-  border-color: #28a745 !important;
-  transform: translateY(-2px);
-}
-
-.navbar {
-  background: linear-gradient(90deg, #28a745, #20c997) !important;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-  padding: 1rem 0;
-}
-
-.navbar-brand {
-  font-weight: 700;
-  font-size: 1.5rem;
-}
-
-.form-control {
-  border-radius: 10px !important;
-  border: 2px solid #e9ecef;
-  transition: all 0.3s ease;
-  padding: 12px 15px;
-}
-
-.form-control:focus {
-  border-color: #28a745 !important;
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
-  transform: translateY(-1px);
-}
-
-.badge {
-  border-radius: 20px !important;
-  padding: 8px 15px !important;
-  font-weight: 500;
-}
-
-.carousel-item img {
-  border-radius: 15px;
-  filter: brightness(0.8);
-  transition: filter 0.3s ease;
-  height: 400px;
-  object-fit: cover;
-}
-
-.carousel-item:hover img {
-  filter: brightness(1);
-}
-
-.offcanvas {
-  border-radius: 0 15px 15px 0 !important;
-  box-shadow: 5px 0 25px rgba(0,0,0,0.1);
-}
-
-.nav-link {
-  border-radius: 10px !important;
-  transition: all 0.3s ease;
-  margin: 2px 0;
-}
-
-.nav-link:hover {
-  background-color: rgba(40, 167, 69, 0.1) !important;
-  transform: translateX(5px);
-  color: #28a745 !important;
-}
-
-.card-header {
-  background: linear-gradient(45deg, #28a745, #20c997) !important;
-  border: none !important;
-  padding: 1.25rem;
-}
-
-.modal-content {
-  border-radius: 15px !important;
-  border: none;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-  background: linear-gradient(45deg, #28a745, #20c997) !important;
-  border: none !important;
-  border-radius: 15px 15px 0 0 !important;
-}
-
-.input-group-text {
-  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-  border: 2px solid #e9ecef;
-  border-right: none;
-}
-
-.form-check-input:checked {
-  background-color: #28a745;
-  border-color: #28a745;
-}
-
-.alert {
-  border-radius: 10px !important;
-  border: none;
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-.container {
-  padding-top: 2rem;
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+  font-weight: 700;
 }
 
-.text-success {
-  color: #28a745 !important;
+.lead {
+  font-weight: 400;
 }
 
-.bg-success {
-  background: linear-gradient(45deg, #28a745, #20c997) !important;
+.btn {
+  font-weight: 500;
 }
 
-/* Pontos de Coleta page background */
-.pontos-coleta-page {
-  background: #f4f1e8 !important;
-  min-height: 100vh;
+.card-title {
+  font-weight: 600;
 }

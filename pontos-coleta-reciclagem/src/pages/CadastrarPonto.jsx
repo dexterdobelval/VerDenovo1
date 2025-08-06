@@ -1,25 +1,26 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { pontosColetaAPI } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 function CadastrarPonto() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const navigate = useNavigate();
 
   const onSubmit = async (dados) => {
     setLoading(true);
     setMensagem('');
     
-    try {
-      await pontosColetaAPI.criar(dados);
+    // Simula o cadastro
+    setTimeout(() => {
       setMensagem('Ponto de coleta cadastrado com sucesso!');
       reset();
-    } catch (error) {
-      setMensagem('Erro ao cadastrar ponto de coleta');
-    } finally {
       setLoading(false);
-    }
+      setTimeout(() => {
+        navigate('/login-ponto');
+      }, 2000);
+    }, 1000);
   };
 
   return (
