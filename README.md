@@ -1,7 +1,8 @@
-COMO VISUALIZAR O PROJETO 🍃
+COMO VISUALIZAR O PROJETO 🌎
 ---------------------------
 cd pontos-coleta-reciclagem 
 ---------------------------
-npm install
+npm install 
+---------------------------
 npm run dev ✅
 ---------------------------
