@@ -1,7 +1,68 @@
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { database } from '../services/database';
+
 function PersonalizarEmpresa() {
+  const { usuario, logout, loginEmpresa } = useAuth();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nomeEmpresa: '',
+    cnpj: '',
+    email: '',
+    telefone: '',
+    endereco: '',
+    cidade: '',
+    cep: '',
+    descricao: '',
+    horario: ''
+  });
+
+  useEffect(() => {
+    if (usuario && usuario.dados) {
+      setFormData({
+        nomeEmpresa: usuario.dados.nomeEmpresa || '',
+        cnpj: usuario.dados.cnpj || '',
+        email: usuario.dados.email || '',
+        telefone: usuario.dados.telefone || '',
+        endereco: usuario.dados.endereco || '',
+        cidade: usuario.dados.cidade || '',
+        cep: usuario.dados.cep || '',
+        descricao: usuario.dados.descricao || '',
+        horario: usuario.dados.horario || ''
+      });
+    }
+  }, [usuario]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
   const salvarInformacoes = (e) => {
     e.preventDefault();
-    alert('Informações da empresa salvas com sucesso!');
+    
+    const empresaAtualizada = database.atualizarEmpresa(usuario.dados.id, formData);
+    
+    if (empresaAtualizada) {
+      // Atualizar contexto de autenticação com novos dados
+      loginEmpresa(empresaAtualizada);
+      alert('Informações da empresa salvas com sucesso!');
+    } else {
+      alert('Erro ao salvar informações!');
+    }
+  };
+
+  const excluirEmpresa = () => {
+    if (window.confirm('Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita.')) {
+      database.excluirEmpresa(usuario.dados.id);
+      logout();
+      alert('Empresa excluída com sucesso!');
+      navigate('/');
+    }
   };
 
   return (
@@ -19,49 +80,112 @@ function PersonalizarEmpresa() {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Nome da Empresa</label>
-                  <input type="text" className="form-control" required />
+                  <input 
+                    type="text" 
+                    name="nomeEmpresa"
+                    className="form-control" 
+                    value={formData.nomeEmpresa}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">CNPJ</label>
-                  <input type="text" className="form-control" required />
+                  <input 
+                    type="text" 
+                    name="cnpj"
+                    className="form-control" 
+                    value={formData.cnpj}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
               </div>
               
               <div className="row">
                 <div className="col-md-8 mb-3">
                   <label className="form-label">Endereço</label>
-                  <input type="text" className="form-control" required />
+                  <input 
+                    type="text" 
+                    name="endereco"
+                    className="form-control" 
+                    value={formData.endereco}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">CEP</label>
-                  <input type="text" className="form-control" required />
+                  <input 
+                    type="text" 
+                    name="cep"
+                    className="form-control" 
+                    value={formData.cep}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
               </div>
 
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Cidade</label>
-                  <input type="text" className="form-control" required />
+                  <input 
+                    type="text" 
+                    name="cidade"
+                    className="form-control" 
+                    value={formData.cidade}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Telefone</label>
-                  <input type="tel" className="form-control" required />
+                  <input 
+                    type="tel" 
+                    name="telefone"
+                    className="form-control" 
+                    value={formData.telefone}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Email</label>
-                <input type="email" className="form-control" required />
+                <input 
+                  type="email" 
+                  name="email"
+                  className="form-control" 
+                  value={formData.email}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Descrição da Empresa</label>
-                <textarea className="form-control" rows="3" placeholder="Descreva sua empresa e atividades..."></textarea>
+                <textarea 
+                  className="form-control" 
+                  name="descricao"
+                  rows="3" 
+                  placeholder="Descreva sua empresa e atividades..."
+                  value={formData.descricao}
+                  onChange={handleChange}
+                ></textarea>
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Horário de Funcionamento</label>
-                <input type="text" className="form-control" placeholder="Ex: 08:00 - 18:00" />
+                <input 
+                  type="text" 
+                  name="horario"
+                  className="form-control" 
+                  placeholder="Ex: 08:00 - 18:00" 
+                  value={formData.horario}
+                  onChange={handleChange}
+                />
               </div>
 
               {/* Logo da Empresa */}
@@ -129,11 +253,23 @@ function PersonalizarEmpresa() {
                 </div>
               </div>
 
-              <div className="d-grid">
-                <button type="submit" className="btn btn-success">
-                  <i className="bi bi-check-circle me-2"></i>
-                  Salvar Informações
-                </button>
+              <div className="row">
+                <div className="col-md-8">
+                  <button type="submit" className="btn btn-success w-100">
+                    <i className="bi bi-check-circle me-2"></i>
+                    Salvar Informações
+                  </button>
+                </div>
+                <div className="col-md-4">
+                  <button 
+                    type="button" 
+                    className="btn btn-danger w-100"
+                    onClick={excluirEmpresa}
+                  >
+                    <i className="bi bi-trash me-2"></i>
+                    Excluir Empresa
+                  </button>
+                </div>
               </div>
             </form>
           </div>

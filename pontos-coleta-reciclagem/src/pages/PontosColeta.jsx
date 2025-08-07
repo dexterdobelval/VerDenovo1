@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { database } from '../services/database';
+import { excluirPontoPorNome } from '../utils/excluirPonto';
 
 function PontosColeta() {
   const [pontoSelecionado, setPontoSelecionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [pontos, setPontos] = useState([]);
   
-  const pontosExemplo = [
+  useEffect(() => {
+    // Excluir ponto chamado "ponto" se existir
+    excluirPontoPorNome('ponto');
+    
+    const pontosCadastrados = database.listarPontos();
+    const pontosExemplo = [
     {
       id: 1,
       nome: "EcoVerde Reciclagem",
@@ -66,6 +74,9 @@ function PontosColeta() {
       materiais: { papel: true, plastico: true, vidro: false, metal: false }
     }
   ];
+    
+    setPontos([...pontosExemplo, ...pontosCadastrados]);
+  }, []);
 
   const formatarMateriais = (materiais) => {
     if (!materiais) return 'Não informado';
@@ -109,13 +120,13 @@ function PontosColeta() {
           <p className="lead text-muted mb-4">Encontre o ponto de coleta mais próximo de você</p>
           <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill">
             <i className="bi bi-check-circle me-2"></i>
-            <span className="fw-bold">{pontosExemplo.length} pontos disponíveis</span>
+            <span className="fw-bold">{pontos.length} pontos disponíveis</span>
           </div>
         </div>
       </div>
 
       <div className="row">
-        {pontosExemplo.map((ponto) => (
+        {pontos.map((ponto) => (
           <div key={ponto.id} className="col-md-6 col-lg-4 mb-4">
             <div className="card h-100 border-0 shadow-sm position-relative overflow-hidden">
               <div className="position-absolute top-0 end-0 m-3">

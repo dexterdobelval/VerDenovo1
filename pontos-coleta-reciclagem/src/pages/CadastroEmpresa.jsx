@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { database } from '../services/database';
 
 function CadastroEmpresa() {
   const navigate = useNavigate();
@@ -28,11 +29,17 @@ function CadastroEmpresa() {
       alert('As senhas não coincidem!');
       return;
     }
-    alert('Empresa cadastrada com sucesso!');
-    console.log('Dados da empresa:', formData);
-    setTimeout(() => {
-      navigate('/login-empresa');
-    }, 2000);
+    
+    try {
+      database.adicionarEmpresa(formData);
+      alert('Empresa cadastrada com sucesso!');
+      
+      setTimeout(() => {
+        navigate('/login-empresa');
+      }, 2000);
+    } catch (error) {
+      alert('Erro ao cadastrar empresa');
+    }
   };
 
   return (

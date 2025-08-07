@@ -1,26 +1,41 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { database } from '../services/database';
 
 function CadastrarPonto() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [credenciais, setCredenciais] = useState({ codigo: '', senha: '' });
   const navigate = useNavigate();
 
   const onSubmit = async (dados) => {
     setLoading(true);
     setMensagem('');
     
-    // Simula o cadastro
-    setTimeout(() => {
-      setMensagem('Ponto de coleta cadastrado com sucesso!');
+    try {
+      // Gerar código único para o ponto
+      const codigo = 'ECO' + Math.random().toString(36).substr(2, 6).toUpperCase();
+      const senha = Math.random().toString(36).substr(2, 8);
+      
+      const dadosCompletos = {
+        ...dados,
+        codigo,
+        senha
+      };
+      
+      database.adicionarPonto(dadosCompletos);
+      
+      setCredenciais({ codigo, senha });
+      setMostrarModal(true);
       reset();
       setLoading(false);
-      setTimeout(() => {
-        navigate('/login-ponto');
-      }, 2000);
-    }, 1000);
+    } catch (error) {
+      setMensagem('Erro ao cadastrar ponto');
+      setLoading(false);
+    }
   };
 
   return (
@@ -129,6 +144,52 @@ function CadastrarPonto() {
           </button>
         </form>
       </div>
+      
+      {/* Modal de Sucesso */}
+      {mostrarModal && (
+        <div className="modal d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-success text-white">
+                <h5 className="modal-title">
+                  <i className="bi bi-check-circle me-2"></i>
+                  Ponto Cadastrado com Sucesso!
+                </h5>
+              </div>
+              <div className="modal-body text-center p-4">
+                <div className="alert alert-success">
+                  <h4 className="alert-heading">Suas Credenciais de Acesso</h4>
+                  <hr/>
+                  <div className="row">
+                    <div className="col-6">
+                      <strong>Código do Ponto:</strong><br/>
+                      <span className="fs-4 text-success fw-bold">{credenciais.codigo}</span>
+                    </div>
+                    <div className="col-6">
+                      <strong>Senha:</strong><br/>
+                      <span className="fs-4 text-success fw-bold">{credenciais.senha}</span>
+                    </div>
+                  </div>
+                  <hr/>
+                  <small className="text-muted">Anote essas informações para fazer login</small>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-success"
+                  onClick={() => {
+                    setMostrarModal(false);
+                    navigate('/login-ponto');
+                  }}
+                >
+                  Ir para Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

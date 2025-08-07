@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { database } from '../services/database';
 
 function LoginPonto() {
   const navigate = useNavigate();
@@ -19,9 +20,16 @@ function LoginPonto() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginPonto(formData);
-    alert('Acesso ao ponto realizado com sucesso!');
-    navigate('/personalizar-ponto');
+    
+    const ponto = database.buscarPonto(formData.codigo, formData.senha);
+    
+    if (ponto) {
+      loginPonto(ponto);
+      alert('Acesso ao ponto realizado com sucesso!');
+      navigate('/personalizar-ponto');
+    } else {
+      alert('Código ou senha incorretos!');
+    }
   };
 
   return (

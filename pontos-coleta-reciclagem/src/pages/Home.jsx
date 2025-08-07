@@ -1,6 +1,26 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { noticiasService } from '../services/noticias';
 
 function Home() {
+  const [noticias, setNoticias] = useState([]);
+  const [carregandoNoticias, setCarregandoNoticias] = useState(true);
+
+  useEffect(() => {
+    const carregarNoticias = async () => {
+      try {
+        const noticiasAtualizadas = await noticiasService.obterNoticias();
+        setNoticias(noticiasAtualizadas);
+      } catch (error) {
+        console.error('Erro ao carregar notícias:', error);
+      } finally {
+        setCarregandoNoticias(false);
+      }
+    };
+
+    carregarNoticias();
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
@@ -154,78 +174,36 @@ function Home() {
             <i className="bi bi-newspaper me-2"></i>
             Notícias Ambientais
           </h2>
-          <div className="row">
-            <div className="col-md-4 mb-4">
-              <div className="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=200&fit=crop" className="card-img-top" alt="Reciclagem de Plástico" style={{height: '200px', objectFit: 'cover'}} />
-                <div className="card-body">
-                  <h5 className="card-title text-success">Brasil Aumenta Reciclagem de Plástico</h5>
-                  <p className="card-text">País registra crescimento de 15% na reciclagem de materiais plásticos em 2024, contribuindo para redução da poluição ambiental.</p>
-                  <small className="text-muted">
-                    <i className="bi bi-calendar me-1"></i>15 de Janeiro, 2024
-                  </small>
-                </div>
+          {carregandoNoticias ? (
+            <div className="text-center">
+              <div className="spinner-border text-success" role="status">
+                <span className="visually-hidden">Carregando notícias...</span>
               </div>
+              <p className="mt-2 text-muted">Atualizando notícias do Brasil...</p>
             </div>
-            
-            <div className="col-md-4 mb-4">
-              <div className="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400&h=200&fit=crop" className="card-img-top" alt="Energia Solar" style={{height: '200px', objectFit: 'cover'}} />
-                <div className="card-body">
-                  <h5 className="card-title text-success">Energia Solar Bate Recorde</h5>
-                  <p className="card-text">Geração de energia solar no Brasil atinge marca histórica, representando 20% da matriz energética nacional.</p>
-                  <small className="text-muted">
-                    <i className="bi bi-calendar me-1"></i>12 de Janeiro, 2024
-                  </small>
+          ) : (
+            <div className="row">
+              {noticias.map((noticia) => (
+                <div key={noticia.id} className="col-md-4 mb-4">
+                  <div className="card h-100 shadow-sm">
+                    <img 
+                      src={noticia.imagem} 
+                      className="card-img-top" 
+                      alt={noticia.titulo} 
+                      style={{height: '200px', objectFit: 'cover'}} 
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title text-success">{noticia.titulo}</h5>
+                      <p className="card-text">{noticia.resumo}</p>
+                      <small className="text-muted">
+                        <i className="bi bi-calendar me-1"></i>{noticia.data}
+                      </small>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-            
-            <div className="col-md-4 mb-4">
-              <div className="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=400&h=200&fit=crop" className="card-img-top" alt="Reflorestamento" style={{height: '200px', objectFit: 'cover'}} />
-                <div className="card-body">
-                  <h5 className="card-title text-success">Projeto de Reflorestamento</h5>
-                  <p className="card-text">Nova iniciativa visa plantar 1 milhão de árvores na Amazônia, combatendo o desmatamento e preservando a biodiversidade.</p>
-                  <small className="text-muted">
-                    <i className="bi bi-calendar me-1"></i>10 de Janeiro, 2024
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="row">
-            <div className="col-md-6 mb-4">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h5 className="card-title text-success">
-                    <i className="bi bi-droplet me-2"></i>
-                    Economia de Água
-                  </h5>
-                  <p className="card-text">Novas tecnologias de captação de água da chuva ajudam cidades a economizar até 30% do consumo hídrico.</p>
-                  <small className="text-muted">
-                    <i className="bi bi-calendar me-1"></i>8 de Janeiro, 2024
-                  </small>
-                </div>
-              </div>
-            </div>
-            
-            <div className="col-md-6 mb-4">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h5 className="card-title text-success">
-                    <i className="bi bi-truck me-2"></i>
-                    Transporte Sustentável
-                  </h5>
-                  <p className="card-text">Frota de ônibus elétricos cresce 40% nas capitais brasileiras, reduzindo emissões de CO2 no transporte público.</p>
-                  <small className="text-muted">
-                    <i className="bi bi-calendar me-1"></i>5 de Janeiro, 2024
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

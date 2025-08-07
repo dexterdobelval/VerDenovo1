@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { database } from '../services/database';
 
 function LoginEmpresa() {
   const navigate = useNavigate();
@@ -19,9 +20,16 @@ function LoginEmpresa() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginEmpresa(formData);
-    alert('Login realizado com sucesso!');
-    navigate('/personalizar-empresa');
+    
+    const empresa = database.buscarEmpresa(formData.email, formData.senha);
+    
+    if (empresa) {
+      loginEmpresa(empresa);
+      alert('Login realizado com sucesso!');
+      navigate('/personalizar-empresa');
+    } else {
+      alert('Email ou senha incorretos!');
+    }
   };
 
   return (

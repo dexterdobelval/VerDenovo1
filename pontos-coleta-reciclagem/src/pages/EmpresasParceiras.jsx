@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { database } from '../services/database';
 
 function EmpresasParceiras() {
   const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [empresas, setEmpresas] = useState([]);
 
-  const empresasExemplo = [
+  useEffect(() => {
+    const empresasCadastradas = database.listarEmpresas();
+    const empresasExemplo = [
     {
       id: 1,
       nome: "EcoTech Solutions",
@@ -72,6 +76,9 @@ function EmpresasParceiras() {
       descricao: "Fornecimento de materiais sustentáveis e ecológicos"
     }
   ];
+    
+    setEmpresas([...empresasExemplo, ...empresasCadastradas]);
+  }, []);
 
   const acessarEmpresa = (empresa) => {
     setEmpresaSelecionada(empresa);
@@ -93,13 +100,13 @@ function EmpresasParceiras() {
           <p className="lead text-muted mb-4">Conheça as empresas que apoiam a sustentabilidade</p>
           <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill">
             <i className="bi bi-check-circle me-2"></i>
-            <span className="fw-bold">{empresasExemplo.length} empresas parceiras</span>
+            <span className="fw-bold">{empresas.length} empresas parceiras</span>
           </div>
         </div>
       </div>
 
       <div className="row">
-        {empresasExemplo.map((empresa) => (
+        {empresas.map((empresa) => (
           <div key={empresa.id} className="col-md-6 col-lg-4 mb-4">
             <div className="card h-100 border-0 shadow-sm position-relative overflow-hidden">
               <div className="position-absolute top-0 end-0 m-3">
@@ -113,8 +120,8 @@ function EmpresasParceiras() {
                     <i className="bi bi-building text-success" style={{fontSize: '1.5rem'}}></i>
                   </div>
                   <div>
-                    <h5 className="card-title mb-1 text-success fw-bold">{empresa.nome}</h5>
-                    <p className="text-muted mb-0 small">{empresa.setor}</p>
+                    <h5 className="card-title mb-1 text-success fw-bold">{empresa.nome || empresa.nomeEmpresa}</h5>
+                    <p className="text-muted mb-0 small">{empresa.setor || 'Empresa Parceira'}</p>
                   </div>
                 </div>
                 
@@ -159,7 +166,7 @@ function EmpresasParceiras() {
               <div className="modal-header bg-success text-white">
                 <h5 className="modal-title">
                   <i className="bi bi-building me-2"></i>
-                  {empresaSelecionada.nome}
+                  {empresaSelecionada.nome || empresaSelecionada.nomeEmpresa}
                 </h5>
                 <button type="button" className="btn-close btn-close-white" onClick={fecharModal}></button>
               </div>
