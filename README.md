@@ -1,8 +1,19 @@
-COMO VISUALIZAR O PROJETO 🌎
+<h1>COMO VISUALIZAR O PROJETO 🌎</h1>
+
 ---------------------------
-cd pontos-coleta-reciclagem 
+
+<p>Abrir terminar e digitar: </p>
+
+--------------------------- 
+
+<P>cd pontos-coleta-reciclagem</P>
+
 ---------------------------
-npm install 
+
+<P>npm install</P>
+
 ---------------------------
-npm run dev ✅
+
+<P>npm run dev ✅</P>
+
 ---------------------------
