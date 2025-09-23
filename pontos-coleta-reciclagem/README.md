@@ -21,12 +21,17 @@ Sistema desenvolvido em ReactJS com Vite para gerenciar pontos de coleta de mate
 
 ## Como Executar
 
-1. Instalar dependências:
+1. Entrar na pasta:
+```bash
+cd pontos-coleta-reciclagem
+```
+
+
+2. Instalar dependências:
 ```bash
 npm install
 ```
-
-2. Executar em modo desenvolvimento:
+3. Executar em modo desenvolvimento:
 ```bash
 npm run dev
 ```
