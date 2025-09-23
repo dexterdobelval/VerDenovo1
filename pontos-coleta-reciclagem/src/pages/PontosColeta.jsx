@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { database } from '../services/database';
 import { excluirPontoPorNome } from '../utils/excluirPonto';
+import { useAuth } from '../contexts/AuthContext';
 
 function PontosColeta() {
+  const { usuario } = useAuth();
   const [pontoSelecionado, setPontoSelecionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [pontos, setPontos] = useState([]);
@@ -108,6 +110,13 @@ function PontosColeta() {
     }
   };
 
+  const excluirPonto = (pontoId) => {
+    if (window.confirm('Tem certeza que deseja excluir este ponto?')) {
+      setPontos(pontos.filter(p => p.id !== pontoId));
+      alert('Ponto excluído com sucesso!');
+    }
+  };
+
 
 
   return (
@@ -171,13 +180,21 @@ function PontosColeta() {
                   </div>
                 </div>
                 
-                <div className="d-grid">
+                <div className="d-grid gap-2">
                   <button 
                     className="btn btn-success"
                     onClick={() => acessarPonto(ponto)}
                   >
                     <i className="bi bi-arrow-right-circle me-2"></i>Acessar Ponto
                   </button>
+                  {usuario?.tipo === 'admin' && (
+                    <button 
+                      className="btn btn-danger btn-sm"
+                      onClick={() => excluirPonto(ponto.id)}
+                    >
+                      <i className="bi bi-trash me-2"></i>Excluir
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

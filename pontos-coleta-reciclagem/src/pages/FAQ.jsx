@@ -1,123 +1,126 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 function FAQ() {
-  const [expandedItems, setExpandedItems] = useState(new Set());
-
-  const toggleExpanded = (id) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(id)) {
-      newExpanded.delete(id);
-    } else {
-      newExpanded.add(id);
+  const [messages, setMessages] = useState([
+    {
+      type: 'bot',
+      text: 'Olá! Sou o VerX, assistente virtual do VerDenovo. Digite o número da opção desejada:',
+      time: new Date().toLocaleTimeString()
+    },
+    {
+      type: 'bot', 
+      text: '1 - O que podemos reciclar?\n2 - Como separar materiais para coleta?\n3 - O que é um EcoPonto?\n4 - Posso reciclar embalagens sujas?\n5 - O que fazer com pilhas e baterias?\n6 - Como descartar óleo de cozinha?\n7 - Outro...\n0 - Ver menu novamente',
+      time: new Date().toLocaleTimeString()
     }
-    setExpandedItems(newExpanded);
+  ]);
+  const [inputValue, setInputValue] = useState('');
+  const messagesEndRef = useRef(null);
+
+  const respostas = {
+    '1': 'Podemos reciclar diversos materiais como papel (jornais, revistas, caixas), plástico (garrafas PET, embalagens), vidro (garrafas, potes), metal (latas de alumínio, tampas) e eletrônicos. É importante que os materiais estejam limpos e separados adequadamente.',
+    '2': 'A separação deve seguir o sistema de cores: azul para papel, vermelho para plástico, verde para vidro e amarelo para metal. Lave bem as embalagens, retire tampas e rótulos quando possível, e mantenha os materiais secos.',
+    '3': 'Um EcoPonto é um local de coleta seletiva onde você pode descartar materiais recicláveis de forma adequada. Estes pontos são estrategicamente localizados em bairros, escolas, empresas e centros comerciais para facilitar o acesso da população.',
+    '4': 'Não, embalagens sujas não devem ser colocadas na reciclagem. Restos de comida, óleo ou outros contaminantes podem prejudicar todo o processo de reciclagem. Sempre lave as embalagens com água antes de descartá-las.',
+    '5': 'Pilhas e baterias contêm metais pesados tóxicos e nunca devem ser descartadas no lixo comum. Procure pontos de coleta específicos em lojas de eletrônicos, supermercados ou postos de coleta especializados.',
+    '6': 'O óleo de cozinha usado deve ser armazenado em recipientes fechados (como garrafas PET) e levado a pontos de coleta específicos. Nunca despeje óleo no ralo ou vaso sanitário, pois isso causa entupimentos e poluição da água.',
+    '7': 'Para outras dúvidas, entre em contato conosco pelo email: contato@verdenovo.com.br\n\nNossa equipe responderá sua pergunta o mais breve possível!'
   };
 
-  const faqs = [
-    {
-      id: 1,
-      pergunta: "O que podemos reciclar?",
-      resposta: "Podemos reciclar diversos materiais como papel (jornais, revistas, caixas), plástico (garrafas PET, embalagens), vidro (garrafas, potes), metal (latas de alumínio, tampas) e eletrônicos. É importante que os materiais estejam limpos e separados adequadamente. Materiais contaminados, papel higiênico, isopor e vidros temperados não podem ser reciclados."
-    },
-    {
-      id: 2,
-      pergunta: "Como separar adequadamente os materiais para coleta?",
-      resposta: "A separação deve seguir o sistema de cores: azul para papel, vermelho para plástico, verde para vidro e amarelo para metal. Lave bem as embalagens, retire tampas e rótulos quando possível, e mantenha os materiais secos. Separe também os resíduos orgânicos dos recicláveis. Materiais especiais como pilhas, medicamentos e óleo de cozinha devem ter descarte específico."
-    },
-    {
-      id: 3,
-      pergunta: "O que é um EcoPonto?",
-      resposta: "Um EcoPonto é um local de coleta seletiva onde você pode descartar materiais recicláveis de forma adequada. Estes pontos são estrategicamente localizados em bairros, escolas, empresas e centros comerciais para facilitar o acesso da população. Cada EcoPonto possui containers coloridos para diferentes tipos de materiais e contribui para a logística reversa e economia circular."
-    },
-    {
-      id: 4,
-      pergunta: "Posso reciclar embalagens sujas?",
-      resposta: "Não, embalagens sujas não devem ser colocadas na reciclagem. Restos de comida, óleo ou outros contaminantes podem prejudicar todo o processo de reciclagem e contaminar outros materiais limpos. Sempre lave as embalagens com água antes de descartá-las nos containers apropriados."
-    },
-    {
-      id: 5,
-      pergunta: "O que fazer com pilhas e baterias?",
-      resposta: "Pilhas e baterias contêm metais pesados tóxicos e nunca devem ser descartadas no lixo comum. Procure pontos de coleta específicos em lojas de eletrônicos, supermercados ou postos de coleta especializados. Muitos fabricantes também têm programas de logística reversa para estes produtos."
-    },
-    {
-      id: 6,
-      pergunta: "Como descartar óleo de cozinha usado?",
-      resposta: "O óleo de cozinha usado deve ser armazenado em recipientes fechados (como garrafas PET) e levado a pontos de coleta específicos. Nunca despeje óleo no ralo ou vaso sanitário, pois isso causa entupimentos e poluição da água. O óleo coletado pode ser transformado em biodiesel e sabão."
-    }
-  ];
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+
+    const userMessage = {
+      type: 'user',
+      text: inputValue,
+      time: new Date().toLocaleTimeString()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    setTimeout(() => {
+      let botResponse;
+      if (respostas[inputValue]) {
+        botResponse = {
+          type: 'bot',
+          text: respostas[inputValue],
+          time: new Date().toLocaleTimeString()
+        };
+      } else if (inputValue === '0') {
+        botResponse = {
+          type: 'bot',
+          text: '1 - O que podemos reciclar?\n2 - Como separar materiais para coleta?\n3 - O que é um EcoPonto?\n4 - Posso reciclar embalagens sujas?\n5 - O que fazer com pilhas e baterias?\n6 - Como descartar óleo de cozinha?\n7 - Outro...\n0 - Ver menu novamente',
+          time: new Date().toLocaleTimeString()
+        };
+      } else {
+        botResponse = {
+          type: 'bot',
+          text: 'Opção inválida. Digite um número de 1 a 7 ou 0 para ver o menu.',
+          time: new Date().toLocaleTimeString()
+        };
+      }
+      setMessages(prev => [...prev, botResponse]);
+    }, 500);
+
+    setInputValue('');
+  };
 
   return (
     <div>
-      <div className="text-center mb-5">
+      <div className="text-center mb-4">
         <h1 className="display-4 text-success mb-3">
-          <i className="bi bi-question-circle me-3"></i>
-          Perguntas Frequentes
+          <i className="bi bi-robot me-3"></i>
+          VerX - Assistente Virtual
         </h1>
         <p className="lead">
-          Tire suas dúvidas sobre reciclagem e descarte correto de materiais
+          Tire suas dúvidas sobre reciclagem com o VerX
         </p>
       </div>
 
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          {faqs.map((faq) => (
-            <div key={faq.id} className="card mb-3 shadow-sm">
-              <div className="card-header bg-light">
-                <div 
-                  className="d-flex justify-content-between align-items-center"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => toggleExpanded(faq.id)}
-                >
-                  <h5 className="mb-0 text-success">
-                    <i className="bi bi-chat-question me-2"></i>
-                    {faq.pergunta}
-                  </h5>
-                  <button className="btn btn-success btn-sm">
-                    <i className={`bi ${expandedItems.has(faq.id) ? 'bi-dash' : 'bi-plus'}`}></i>
-                  </button>
-                </div>
-              </div>
-              
-              {expandedItems.has(faq.id) && (
-                <div className="card-body">
-                  <p className="mb-0 text-muted">
-                    <i className="bi bi-chat-text me-2"></i>
-                    {faq.resposta}
-                  </p>
-                </div>
-              )}
+          <div className="card shadow">
+            <div className="card-header bg-success text-white">
+              <h5 className="mb-0">
+                <i className="bi bi-chat-dots me-2"></i>
+                VerX
+              </h5>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="row mt-5">
-        <div className="col-12">
-          <div className="card bg-success text-white">
-            <div className="card-body text-center">
-              <h3>
-                <i className="bi bi-lightbulb me-2"></i>
-                Ainda tem dúvidas?
-              </h3>
-              <p className="mb-3">
-                Entre em contato conosco ou visite nossos pontos de coleta para mais informações
-              </p>
-              <div className="row">
-                <div className="col-md-4 mb-3">
-                  <i className="bi bi-envelope display-6 mb-2"></i>
-                  <h5>Email</h5>
-                  <p>contato@verdenovo.com.br</p>
-                </div>
-                <div className="col-md-4 mb-3">
-                  <i className="bi bi-telephone display-6 mb-2"></i>
-                  <h5>Telefone</h5>
-                  <p>(11) 0000-0000</p>
-                </div>
-                <div className="col-md-4 mb-3">
-                  <i className="bi bi-geo-alt display-6 mb-2"></i>
-                  <h5>Pontos de Coleta</h5>
-                  <p>Encontre o mais próximo de você</p>
-                </div>
+            <div className="card-body p-0">
+              <div className="chat-messages" style={{ height: '400px', overflowY: 'auto', padding: '1rem' }}>
+                {messages.map((message, index) => (
+                  <div key={index} className={`d-flex mb-3 ${message.type === 'user' ? 'justify-content-end' : 'justify-content-start'}`}>
+                    <div className={`message ${message.type === 'user' ? 'bg-primary text-white' : 'bg-light'}`} style={{ maxWidth: '70%', padding: '0.75rem', borderRadius: '1rem', whiteSpace: 'pre-line' }}>
+                      <div>{message.text}</div>
+                      <small className={`d-block mt-1 ${message.type === 'user' ? 'text-white-50' : 'text-muted'}`}>
+                        {message.time}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+            <div className="card-footer">
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Digite o número da opção..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                />
+                <button className="btn btn-success" onClick={handleSendMessage}>
+                  <i className="bi bi-send"></i>
+                </button>
               </div>
             </div>
           </div>

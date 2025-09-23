@@ -33,3 +33,15 @@ h1, h2, h3, h4, h5, h6 {
 .card-title {
   font-weight: 600;
 }
+
+/* Fix scroll issues */
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  overflow-y: auto;
+}

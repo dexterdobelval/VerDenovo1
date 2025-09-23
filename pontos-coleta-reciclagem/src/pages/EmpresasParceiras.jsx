@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { database } from '../services/database';
+import { useAuth } from '../contexts/AuthContext';
 
 function EmpresasParceiras() {
+  const { usuario } = useAuth();
   const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [empresas, setEmpresas] = useState([]);
@@ -90,6 +92,13 @@ function EmpresasParceiras() {
     setEmpresaSelecionada(null);
   };
 
+  const excluirEmpresa = (empresaId) => {
+    if (window.confirm('Tem certeza que deseja excluir esta empresa?')) {
+      setEmpresas(empresas.filter(e => e.id !== empresaId));
+      alert('Empresa excluída com sucesso!');
+    }
+  };
+
   return (
     <div className="empresas-parceiras-page">
       <div className="row mb-5">
@@ -144,13 +153,21 @@ function EmpresasParceiras() {
                   <p className="small text-muted">{empresa.descricao}</p>
                 </div>
                 
-                <div className="d-grid">
+                <div className="d-grid gap-2">
                   <button 
                     className="btn btn-success"
                     onClick={() => acessarEmpresa(empresa)}
                   >
                     <i className="bi bi-arrow-right-circle me-2"></i>Ver Detalhes
                   </button>
+                  {usuario?.tipo === 'admin' && (
+                    <button 
+                      className="btn btn-danger btn-sm"
+                      onClick={() => excluirEmpresa(empresa.id)}
+                    >
+                      <i className="bi bi-trash me-2"></i>Excluir
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

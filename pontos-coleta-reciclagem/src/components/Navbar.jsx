@@ -77,20 +77,29 @@ function Navbar() {
                 <i className="bi bi-person-circle me-2"></i>Conta
               </h6>
               {isLogado() ? (
-                <div className="card border-success">
-                  <div className="card-header bg-success text-white">
+                <div className={`card ${usuario.tipo === 'admin' ? 'border-danger' : 'border-success'}`}>
+                  <div className={`card-header ${usuario.tipo === 'admin' ? 'bg-danger' : 'bg-success'} text-white`}>
                     <small className="fw-bold">
-                      {usuario.tipo === 'empresa' ? 'EMPRESA LOGADA' : 'PONTO LOGADO'}
+                      {usuario.tipo === 'empresa' ? 'EMPRESA LOGADA' : 
+                       usuario.tipo === 'ponto' ? 'PONTO LOGADO' : 'ADMINISTRADOR'}
                     </small>
                   </div>
                   <div className="card-body py-2">
-                    <Link 
-                      className="nav-link py-2 px-3 rounded mb-2" 
-                      to={usuario.tipo === 'empresa' ? '/personalizar-empresa' : '/personalizar-ponto'} 
-                      onClick={closeOffcanvas}
-                    >
-                      <i className="bi bi-gear me-2"></i>Personalizar Informações
-                    </Link>
+                    {usuario.tipo === 'admin' ? (
+                      <>
+                        <Link className="nav-link py-2 px-3 rounded mb-2" to="/cadastrar" onClick={closeOffcanvas}>
+                          <i className="bi bi-plus-circle me-2"></i>Adicionar Ponto
+                        </Link>
+                      </>
+                    ) : (
+                      <Link 
+                        className="nav-link py-2 px-3 rounded mb-2" 
+                        to={usuario.tipo === 'empresa' ? '/personalizar-empresa' : '/personalizar-ponto'} 
+                        onClick={closeOffcanvas}
+                      >
+                        <i className="bi bi-gear me-2"></i>Personalizar Informações
+                      </Link>
+                    )}
                     <button 
                       className="nav-link py-2 px-3 rounded w-100 text-start border-0 bg-transparent text-danger" 
                       onClick={handleLogout}
@@ -122,8 +131,11 @@ function Navbar() {
                       <Link className="nav-link py-1 px-2 rounded mb-1" to="/login-empresa" onClick={closeOffcanvas}>
                         <i className="bi bi-building me-2"></i>Empresa
                       </Link>
-                      <Link className="nav-link py-1 px-2 rounded" to="/login-ponto" onClick={closeOffcanvas}>
+                      <Link className="nav-link py-1 px-2 rounded mb-1" to="/login-ponto" onClick={closeOffcanvas}>
                         <i className="bi bi-unlock me-2"></i>Ponto de Coleta
+                      </Link>
+                      <Link className="nav-link py-1 px-2 rounded" to="/login-admin" onClick={closeOffcanvas}>
+                        <i className="bi bi-shield-lock me-2"></i>Administrador
                       </Link>
                     </div>
                   </div>

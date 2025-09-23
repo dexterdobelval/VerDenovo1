@@ -21,6 +21,10 @@ export const AuthProvider = ({ children }) => {
     setUsuario({ tipo: 'ponto', dados: dadosPonto });
   };
 
+  const loginAdmin = () => {
+    setUsuario({ tipo: 'admin', dados: { email: 'vitorhugobate@gmail.com' } });
+  };
+
   const logout = () => {
     setUsuario(null);
   };
@@ -34,6 +38,7 @@ export const AuthProvider = ({ children }) => {
       usuario,
       loginEmpresa,
       loginPonto,
+      loginAdmin,
       logout,
       isLogado
     }}>

@@ -8,6 +8,7 @@ import CadastrarPonto from './pages/CadastrarPonto';
 import CadastroEmpresa from './pages/CadastroEmpresa';
 import LoginEmpresa from './pages/LoginEmpresa';
 import LoginPonto from './pages/LoginPonto';
+import LoginAdmin from './pages/LoginAdmin';
 import PersonalizarEmpresa from './pages/PersonalizarEmpresa';
 import PersonalizarPonto from './pages/PersonalizarPonto';
 import MateriaisReciclaveis from './pages/MateriaisReciclaveis';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/cadastro-empresa" element={<CadastroEmpresa />} />
             <Route path="/login-empresa" element={<LoginEmpresa />} />
             <Route path="/login-ponto" element={<LoginPonto />} />
+            <Route path="/login-admin" element={<LoginAdmin />} />
             <Route path="/personalizar-empresa" element={<PersonalizarEmpresa />} />
             <Route path="/personalizar-ponto" element={<PersonalizarPonto />} />
             <Route path="/materiais" element={<MateriaisReciclaveis />} />
