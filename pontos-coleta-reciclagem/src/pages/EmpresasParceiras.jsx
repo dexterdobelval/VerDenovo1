@@ -8,6 +8,27 @@ function EmpresasParceiras() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [empresas, setEmpresas] = useState([]);
 
+  const animationStyles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeInUp { animation: fadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-slideInLeft { animation: slideInLeft 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-scaleIn { animation: scaleIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-delay-1 { animation-delay: 0.2s; animation-fill-mode: both; }
+    .animate-delay-2 { animation-delay: 0.4s; animation-fill-mode: both; }
+    .animate-delay-3 { animation-delay: 0.6s; animation-fill-mode: both; }
+  `;
+
   useEffect(() => {
     const empresasCadastradas = database.listarEmpresas();
     const empresasExemplo = [
@@ -101,13 +122,14 @@ function EmpresasParceiras() {
 
   return (
     <div className="empresas-parceiras-page">
+      <style>{animationStyles}</style>
       <div className="row mb-5">
-        <div className="col-12 text-center">
-          <h1 className="display-4 text-success mb-3">
+        <div className="col-12 text-center animate-fadeInUp">
+          <h1 className="display-4 text-success mb-3 animate-slideInLeft">
             <i className="bi bi-building me-3"></i>Empresas Parceiras
           </h1>
-          <p className="lead text-muted mb-4">Conheça as empresas que apoiam a sustentabilidade</p>
-          <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill">
+          <p className="lead text-muted mb-4 animate-fadeInUp animate-delay-1">Conheça as empresas que apoiam a sustentabilidade</p>
+          <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill animate-scaleIn animate-delay-2">
             <i className="bi bi-check-circle me-2"></i>
             <span className="fw-bold">{empresas.length} empresas parceiras</span>
           </div>
@@ -115,9 +137,9 @@ function EmpresasParceiras() {
       </div>
 
       <div className="row">
-        {empresas.map((empresa) => (
+        {empresas.map((empresa, index) => (
           <div key={empresa.id} className="col-md-6 col-lg-4 mb-4">
-            <div className="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+            <div className={`card h-100 border-0 shadow-sm position-relative overflow-hidden animate-scaleIn animate-delay-${(index % 3) + 1}`}>
               <div className="position-absolute top-0 end-0 m-3">
                 <span className="badge bg-success rounded-pill px-3 py-2">
                   <i className="bi bi-check-circle me-1"></i>Parceira

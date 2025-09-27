@@ -1,4 +1,26 @@
 function Residuos() {
+  const animationStyles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeInUp { animation: fadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-slideInLeft { animation: slideInLeft 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-scaleIn { animation: scaleIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-delay-1 { animation-delay: 0.2s; animation-fill-mode: both; }
+    .animate-delay-2 { animation-delay: 0.4s; animation-fill-mode: both; }
+    .animate-delay-3 { animation-delay: 0.6s; animation-fill-mode: both; }
+    .animate-delay-4 { animation-delay: 0.8s; animation-fill-mode: both; }
+  `;
+
   const residuosComuns = [
     {
       id: 1,
@@ -67,26 +89,27 @@ function Residuos() {
 
   return (
     <div>
-      <div className="text-center mb-5">
-        <h1 className="display-4 text-success mb-3">
+      <style>{animationStyles}</style>
+      <div className="text-center mb-5 animate-fadeInUp">
+        <h1 className="display-4 text-success mb-3 animate-slideInLeft">
           <i className="bi bi-trash me-3"></i>
           Resíduos Comuns e Especiais
         </h1>
-        <p className="lead">
+        <p className="lead animate-fadeInUp animate-delay-1">
           Aprenda a identificar e descartar corretamente diferentes tipos de resíduos
         </p>
       </div>
 
       {/* Resíduos Comuns */}
       <div className="mb-5">
-        <h2 className="text-success mb-4">
+        <h2 className="text-success mb-4 animate-slideInLeft animate-delay-2">
           <i className="bi bi-house me-2"></i>
           Resíduos Comuns
         </h2>
         <div className="row">
-          {residuosComuns.map((residuo) => (
+          {residuosComuns.map((residuo, index) => (
             <div key={residuo.id} className="col-lg-6 mb-4">
-              <div className="card h-100 shadow-sm">
+              <div className={`card h-100 shadow-sm animate-scaleIn animate-delay-${(index % 2) + 1}`}>
                 <div className={`card-header ${residuo.cor} text-white`}>
                   <h4 className="card-title mb-0">
                     <i className={`bi ${residuo.icone} me-2`}></i>
@@ -140,14 +163,14 @@ function Residuos() {
 
       {/* Resíduos Especiais */}
       <div className="mb-5">
-        <h2 className="text-danger mb-4">
+        <h2 className="text-danger mb-4 animate-slideInLeft animate-delay-3">
           <i className="bi bi-exclamation-triangle me-2"></i>
           Resíduos Especiais
         </h2>
         <div className="row">
-          {residuosEspeciais.map((residuo) => (
+          {residuosEspeciais.map((residuo, index) => (
             <div key={residuo.id} className="col-lg-6 mb-4">
-              <div className="card h-100 shadow-sm border-danger">
+              <div className={`card h-100 shadow-sm border-danger animate-scaleIn animate-delay-${(index % 4) + 1}`}>
                 <div className={`card-header ${residuo.cor} text-white`}>
                   <h4 className="card-title mb-0">
                     <i className={`bi ${residuo.icone} me-2`}></i>
@@ -202,7 +225,7 @@ function Residuos() {
       {/* Dicas Gerais */}
       <div className="row">
         <div className="col-12">
-          <div className="card bg-success text-white">
+          <div className="card bg-success text-white animate-scaleIn animate-delay-4">
             <div className="card-body text-center">
               <h3>
                 <i className="bi bi-lightbulb me-2"></i>

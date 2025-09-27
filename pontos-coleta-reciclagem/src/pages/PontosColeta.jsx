@@ -9,6 +9,36 @@ function PontosColeta() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [pontos, setPontos] = useState([]);
   
+  const animationStyles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+    .animate-slideInLeft { animation: slideInLeft 0.8s ease-out; }
+    .animate-scaleIn { animation: scaleIn 0.6s ease-out; }
+    .animate-delay-1 { animation-delay: 0.1s; }
+    .animate-delay-2 { animation-delay: 0.2s; }
+    .animate-delay-3 { animation-delay: 0.3s; }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    .hover-scale { transition: transform 0.3s ease; }
+    .hover-scale:hover { transform: scale(1.05); }
+  `;
+  
   useEffect(() => {
     // Excluir ponto chamado "ponto" se existir
     excluirPontoPorNome('ponto');
@@ -121,13 +151,14 @@ function PontosColeta() {
 
   return (
     <div className="pontos-coleta-page">
+      <style>{animationStyles}</style>
       <div className="row mb-5">
-        <div className="col-12 text-center">
-          <h1 className="display-4 text-success mb-3">
+        <div className="col-12 text-center animate-fadeInUp">
+          <h1 className="display-4 text-success mb-3 animate-slideInLeft">
             <i className="bi bi-geo-alt me-3"></i>Pontos de Coleta
           </h1>
-          <p className="lead text-muted mb-4">Encontre o ponto de coleta mais próximo de você</p>
-          <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill">
+          <p className="lead text-muted mb-4 animate-fadeIn animate-delay-2">Encontre o ponto de coleta mais próximo de você</p>
+          <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill animate-scaleIn animate-delay-3 pulse">
             <i className="bi bi-check-circle me-2"></i>
             <span className="fw-bold">{pontos.length} pontos disponíveis</span>
           </div>
@@ -135,9 +166,9 @@ function PontosColeta() {
       </div>
 
       <div className="row">
-        {pontos.map((ponto) => (
+        {pontos.map((ponto, index) => (
           <div key={ponto.id} className="col-md-6 col-lg-4 mb-4">
-            <div className="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+            <div className={`card h-100 border-0 shadow-sm position-relative overflow-hidden hover-lift animate-fadeInUp animate-delay-${(index % 3) + 1}`}>
               <div className="position-absolute top-0 end-0 m-3">
                 <span className="badge bg-success rounded-pill px-3 py-2">
                   <i className="bi bi-check-circle me-1"></i>Ativo
@@ -182,14 +213,14 @@ function PontosColeta() {
                 
                 <div className="d-grid gap-2">
                   <button 
-                    className="btn btn-success"
+                    className="btn btn-success hover-lift"
                     onClick={() => acessarPonto(ponto)}
                   >
                     <i className="bi bi-arrow-right-circle me-2"></i>Acessar Ponto
                   </button>
                   {usuario?.tipo === 'admin' && (
                     <button 
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-danger btn-sm hover-scale"
                       onClick={() => excluirPonto(ponto.id)}
                     >
                       <i className="bi bi-trash me-2"></i>Excluir
@@ -204,9 +235,9 @@ function PontosColeta() {
 
       {/* Modal */}
       {mostrarModal && pontoSelecionado && (
-        <div className="modal d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+        <div className="modal d-block animate-fadeIn" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
           <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content animate-scaleIn">
               <div className="modal-header bg-success text-white">
                 <h5 className="modal-title">
                   <i className="bi bi-geo-alt me-2"></i>
@@ -309,8 +340,8 @@ function PontosColeta() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-success" onClick={fecharModal}>
-                  Fechar
+                <button type="button" className="btn btn-success hover-lift" onClick={fecharModal}>
+                  <i className="bi bi-x-circle me-2"></i>Fechar
                 </button>
               </div>
             </div>

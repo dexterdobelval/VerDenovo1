@@ -10,6 +10,36 @@ function CadastrarPonto() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [credenciais, setCredenciais] = useState({ codigo: '', senha: '' });
   const navigate = useNavigate();
+  
+  const animationStyles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes bounce {
+      0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+      40%, 43% { transform: translate3d(0, -8px, 0); }
+      70% { transform: translate3d(0, -4px, 0); }
+      90% { transform: translate3d(0, -2px, 0); }
+    }
+    .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+    .animate-slideInLeft { animation: slideInLeft 0.8s ease-out; }
+    .animate-scaleIn { animation: scaleIn 0.6s ease-out; }
+    .animate-bounce { animation: bounce 1s ease-in-out; }
+    .animate-delay-1 { animation-delay: 0.1s; }
+    .animate-delay-2 { animation-delay: 0.2s; }
+    .animate-delay-5 { animation-delay: 0.5s; }
+    .hover-lift { transition: transform 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-3px); }
+  `;
 
   const onSubmit = async (dados) => {
     setLoading(true);
@@ -40,8 +70,9 @@ function CadastrarPonto() {
 
   return (
     <div className="row">
-      <div className="col-md-8 mx-auto">
-        <h2 className="mb-4">Cadastrar Ponto de Coleta</h2>
+      <style>{animationStyles}</style>
+      <div className="col-md-8 mx-auto animate-fadeInUp">
+        <h2 className="mb-4 animate-slideInLeft">Cadastrar Ponto de Coleta</h2>
         
         {mensagem && (
           <div className={`alert ${mensagem.includes('sucesso') ? 'alert-success' : 'alert-danger'}`}>
@@ -49,12 +80,12 @@ function CadastrarPonto() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="animate-fadeIn animate-delay-2">
+          <div className="mb-3 animate-fadeInUp animate-delay-1">
             <label className="form-label">Nome do Ponto</label>
             <input
               type="text"
-              className={`form-control ${errors.nome ? 'is-invalid' : ''}`}
+              className={`form-control hover-lift ${errors.nome ? 'is-invalid' : ''}`}
               {...register('nome', { required: 'Nome é obrigatório' })}
             />
             {errors.nome && <div className="invalid-feedback">{errors.nome.message}</div>}
@@ -139,17 +170,27 @@ function CadastrarPonto() {
             />
           </div>
 
-          <button type="submit" className="btn btn-success" disabled={loading}>
-            {loading ? 'Cadastrando...' : 'Cadastrar Ponto'}
+          <button type="submit" className="btn btn-success hover-lift animate-fadeInUp animate-delay-5" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                Cadastrando...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-plus-circle me-2"></i>
+                Cadastrar Ponto
+              </>
+            )}
           </button>
         </form>
       </div>
       
       {/* Modal de Sucesso */}
       {mostrarModal && (
-        <div className="modal d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+        <div className="modal d-block animate-fadeIn" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content animate-scaleIn">
               <div className="modal-header bg-success text-white">
                 <h5 className="modal-title">
                   <i className="bi bi-check-circle me-2"></i>
@@ -177,12 +218,13 @@ function CadastrarPonto() {
               <div className="modal-footer">
                 <button 
                   type="button" 
-                  className="btn btn-success"
+                  className="btn btn-success hover-lift animate-bounce"
                   onClick={() => {
                     setMostrarModal(false);
                     navigate('/login-ponto');
                   }}
                 >
+                  <i className="bi bi-box-arrow-in-right me-2"></i>
                   Ir para Login
                 </button>
               </div>

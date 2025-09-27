@@ -1,7 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import PontosColeta from './pages/PontosColeta';
 import CadastrarPonto from './pages/CadastrarPonto';
@@ -9,6 +10,10 @@ import CadastroEmpresa from './pages/CadastroEmpresa';
 import LoginEmpresa from './pages/LoginEmpresa';
 import LoginPonto from './pages/LoginPonto';
 import LoginAdmin from './pages/LoginAdmin';
+import LoginUsuario from './pages/LoginUsuario';
+import CadastroUsuario from './pages/CadastroUsuario';
+import RecuperarSenha from './pages/RecuperarSenha';
+import GerenciarContas from './pages/GerenciarContas';
 import PersonalizarEmpresa from './pages/PersonalizarEmpresa';
 import PersonalizarPonto from './pages/PersonalizarPonto';
 import MateriaisReciclaveis from './pages/MateriaisReciclaveis';
@@ -18,32 +23,55 @@ import Sobre from './pages/Sobre';
 import Conscientizacao from './pages/Conscientizacao';
 import EmpresasParceiras from './pages/EmpresasParceiras';
 
+function Layout() {
+  const location = useLocation();
+  const isAuthPage = [
+    '/login-usuario', 
+    '/login-empresa', 
+    '/login-ponto', 
+    '/login-admin', 
+    '/cadastro-usuario', 
+    '/cadastro-empresa', 
+    '/cadastrar', 
+    '/recuperar-senha'
+  ].includes(location.pathname);
+
+  return (
+    <div className="App">
+      <Navbar />
+      <div className="container" style={{marginTop: '88px'}}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/pontos" element={<PontosColeta />} />
+          <Route path="/cadastrar" element={<CadastrarPonto />} />
+          <Route path="/cadastro-empresa" element={<CadastroEmpresa />} />
+          <Route path="/login-empresa" element={<LoginEmpresa />} />
+          <Route path="/login-ponto" element={<LoginPonto />} />
+          <Route path="/login-admin" element={<LoginAdmin />} />
+          <Route path="/login-usuario" element={<LoginUsuario />} />
+          <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
+          <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+          <Route path="/gerenciar-contas" element={<GerenciarContas />} />
+          <Route path="/personalizar-empresa" element={<PersonalizarEmpresa />} />
+          <Route path="/personalizar-ponto" element={<PersonalizarPonto />} />
+          <Route path="/materiais" element={<MateriaisReciclaveis />} />
+          <Route path="/residuos" element={<Residuos />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/sobre" element={<Sobre />} />
+          <Route path="/conscientizacao" element={<Conscientizacao />} />
+          <Route path="/empresas-parceiras" element={<EmpresasParceiras />} />
+        </Routes>
+      </div>
+      {!isAuthPage && <Footer />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="App">
-          <Navbar />
-          <div className="container mt-4">
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/pontos" element={<PontosColeta />} />
-            <Route path="/cadastrar" element={<CadastrarPonto />} />
-            <Route path="/cadastro-empresa" element={<CadastroEmpresa />} />
-            <Route path="/login-empresa" element={<LoginEmpresa />} />
-            <Route path="/login-ponto" element={<LoginPonto />} />
-            <Route path="/login-admin" element={<LoginAdmin />} />
-            <Route path="/personalizar-empresa" element={<PersonalizarEmpresa />} />
-            <Route path="/personalizar-ponto" element={<PersonalizarPonto />} />
-            <Route path="/materiais" element={<MateriaisReciclaveis />} />
-            <Route path="/residuos" element={<Residuos />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/sobre" element={<Sobre />} />
-            <Route path="/conscientizacao" element={<Conscientizacao />} />
-            <Route path="/empresas-parceiras" element={<EmpresasParceiras />} />
-            </Routes>
-          </div>
-        </div>
+        <Layout />
       </Router>
     </AuthProvider>
   );

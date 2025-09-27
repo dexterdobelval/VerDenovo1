@@ -1,12 +1,40 @@
+import { useEffect } from 'react';
+
 function Sobre() {
+  const animationStyles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeInUp { animation: fadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-slideInLeft { animation: slideInLeft 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-scaleIn { animation: scaleIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-delay-1 { animation-delay: 0.2s; animation-fill-mode: both; }
+    .animate-delay-2 { animation-delay: 0.4s; animation-fill-mode: both; }
+    .animate-delay-3 { animation-delay: 0.6s; animation-fill-mode: both; }
+  `;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
-      <div className="text-center mb-5">
-        <h1 className="display-4 text-success mb-3">
+      <style>{animationStyles}</style>
+      <div className="text-center mb-5 animate-fadeInUp">
+        <h1 className="display-4 text-success mb-3 animate-slideInLeft">
           <i className="bi bi-people me-3"></i>
           Sobre o VerDenovo
         </h1>
-        <p className="lead">
+        <p className="lead animate-fadeInUp animate-delay-1">
           Conheça nossa história, missão e compromisso com a sustentabilidade
         </p>
       </div>
@@ -14,7 +42,7 @@ function Sobre() {
       {/* Nossa Origem */}
       <div className="row mb-5">
         <div className="col-12">
-          <div className="card shadow-sm">
+          <div className="card shadow-sm animate-scaleIn animate-delay-1">
             <div className="card-header bg-success text-white">
               <h3 className="mb-0">
                 <i className="bi bi-book me-2"></i>
@@ -48,7 +76,7 @@ function Sobre() {
       {/* Nossos Objetivos */}
       <div className="row mb-5">
         <div className="col-12">
-          <div className="card shadow-sm">
+          <div className="card shadow-sm animate-scaleIn animate-delay-2">
             <div className="card-header bg-primary text-white">
               <h3 className="mb-0">
                 <i className="bi bi-target me-2"></i>
@@ -110,7 +138,7 @@ function Sobre() {
       {/* Call to Action */}
       <div className="row">
         <div className="col-12">
-          <div className="card bg-success text-white">
+          <div className="card bg-success text-white animate-scaleIn animate-delay-3">
             <div className="card-body text-center">
               <h3>
                 <i className="bi bi-heart me-2"></i>
