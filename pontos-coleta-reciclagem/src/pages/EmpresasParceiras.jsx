@@ -121,40 +121,73 @@ function EmpresasParceiras() {
   };
 
   return (
-    <div className="empresas-parceiras-page">
+    <div className="empresas-parceiras-page" style={{
+      background: 'linear-gradient(135deg, #f8fffe 0%, #f0fdf4 50%, #ecfdf5 100%)',
+      minHeight: '100vh',
+      paddingTop: '2rem',
+      paddingBottom: '2rem'
+    }}>
       <style>{animationStyles}</style>
-      <div className="row mb-5">
-        <div className="col-12 text-center animate-fadeInUp">
-          <h1 className="display-4 text-success mb-3 animate-slideInLeft">
-            <i className="bi bi-building me-3"></i>Empresas Parceiras
-          </h1>
-          <p className="lead text-muted mb-4 animate-fadeInUp animate-delay-1">Conheça as empresas que apoiam a sustentabilidade</p>
-          <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill animate-scaleIn animate-delay-2">
-            <i className="bi bi-check-circle me-2"></i>
-            <span className="fw-bold">{empresas.length} empresas parceiras</span>
+      <div className="container">
+        <div className="row mb-5">
+          <div className="col-12 text-center animate-fadeInUp">
+            <h1 className="display-4 text-success mb-3 animate-slideInLeft" style={{
+              fontWeight: '700',
+              textShadow: '0 2px 4px rgba(16, 185, 129, 0.1)'
+            }}>
+              <i className="bi bi-building me-3"></i>Empresas Parceiras
+            </h1>
+            <p className="lead text-muted mb-4 animate-fadeInUp animate-delay-1" style={{
+              fontSize: '1.2rem',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}>Conheça as empresas que apoiam a sustentabilidade</p>
+            <div className="d-inline-flex align-items-center text-white px-4 py-3 rounded-pill animate-scaleIn animate-delay-2" style={{
+              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+            }}>
+              <i className="bi bi-check-circle me-2"></i>
+              <span className="fw-bold">{empresas.length} empresas parceiras</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="row">
-        {empresas.map((empresa, index) => (
-          <div key={empresa.id} className="col-md-6 col-lg-4 mb-4">
-            <div className={`card h-100 border-0 shadow-sm position-relative overflow-hidden animate-scaleIn animate-delay-${(index % 3) + 1}`}>
-              <div className="position-absolute top-0 end-0 m-3">
-                <span className="badge bg-success rounded-pill px-3 py-2">
-                  <i className="bi bi-check-circle me-1"></i>Parceira
-                </span>
-              </div>
-              <div className="card-body p-4">
-                <div className="d-flex align-items-center mb-3">
-                  <div className="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                    <i className="bi bi-building text-success" style={{fontSize: '1.5rem'}}></i>
-                  </div>
-                  <div>
-                    <h5 className="card-title mb-1 text-success fw-bold">{empresa.nome || empresa.nomeEmpresa}</h5>
-                    <p className="text-muted mb-0 small">{empresa.setor || 'Empresa Parceira'}</p>
-                  </div>
+        <div className="row">
+          {empresas.map((empresa, index) => (
+            <div key={empresa.id} className="col-md-6 col-lg-4 mb-4">
+              <div className={`card h-100 border-0 position-relative overflow-hidden animate-scaleIn animate-delay-${(index % 3) + 1}`} style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #f8fffe 100%)',
+                boxShadow: '0 8px 25px rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.1)',
+                transition: 'all 0.3s ease'
+              }} onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 15px 35px rgba(16, 185, 129, 0.2)';
+              }} onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.1)';
+              }}>
+                <div className="position-absolute top-0 end-0 m-3">
+                  <span className="badge rounded-pill px-3 py-2" style={{
+                    background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                    color: 'white'
+                  }}>
+                    <i className="bi bi-check-circle me-1"></i>Parceira
+                  </span>
                 </div>
+                <div className="card-body p-4">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="rounded-circle p-3 me-3" style={{
+                      background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+                      border: '2px solid rgba(16, 185, 129, 0.2)'
+                    }}>
+                      <i className="bi bi-building text-success" style={{fontSize: '1.5rem'}}></i>
+                    </div>
+                    <div>
+                      <h5 className="card-title mb-1 text-success fw-bold">{empresa.nome || empresa.nomeEmpresa}</h5>
+                      <p className="text-muted mb-0 small">{empresa.setor || 'Empresa Parceira'}</p>
+                    </div>
+                  </div>
                 
                 <div className="mb-3">
                   <div className="d-flex align-items-center mb-2">
@@ -175,26 +208,42 @@ function EmpresasParceiras() {
                   <p className="small text-muted">{empresa.descricao}</p>
                 </div>
                 
-                <div className="d-grid gap-2">
-                  <button 
-                    className="btn btn-success"
-                    onClick={() => acessarEmpresa(empresa)}
-                  >
-                    <i className="bi bi-arrow-right-circle me-2"></i>Ver Detalhes
-                  </button>
-                  {usuario?.tipo === 'admin' && (
+                  <div className="d-grid gap-2">
                     <button 
-                      className="btn btn-danger btn-sm"
-                      onClick={() => excluirEmpresa(empresa.id)}
+                      className="btn text-white fw-bold"
+                      style={{
+                        background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                        border: 'none',
+                        padding: '12px 20px',
+                        borderRadius: '8px',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                      onClick={() => acessarEmpresa(empresa)}
                     >
-                      <i className="bi bi-trash me-2"></i>Excluir
+                      <i className="bi bi-arrow-right-circle me-2"></i>Ver Detalhes
                     </button>
-                  )}
+                    {usuario?.tipo === 'admin' && (
+                      <button 
+                        className="btn btn-danger btn-sm"
+                        onClick={() => excluirEmpresa(empresa.id)}
+                      >
+                        <i className="bi bi-trash me-2"></i>Excluir
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Modal */}

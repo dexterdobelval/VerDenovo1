@@ -13,6 +13,8 @@ import LoginAdmin from './pages/LoginAdmin';
 import LoginUsuario from './pages/LoginUsuario';
 import CadastroUsuario from './pages/CadastroUsuario';
 import RecuperarSenha from './pages/RecuperarSenha';
+import RecuperarSenhaEmpresa from './pages/RecuperarSenhaEmpresa';
+import RecuperarSenhaPonto from './pages/RecuperarSenhaPonto';
 import GerenciarContas from './pages/GerenciarContas';
 import PersonalizarEmpresa from './pages/PersonalizarEmpresa';
 import PersonalizarPonto from './pages/PersonalizarPonto';
@@ -33,7 +35,9 @@ function Layout() {
     '/cadastro-usuario', 
     '/cadastro-empresa', 
     '/cadastrar', 
-    '/recuperar-senha'
+    '/recuperar-senha',
+    '/recuperar-senha-empresa',
+    '/recuperar-senha-ponto'
   ].includes(location.pathname);
 
   return (
@@ -51,6 +55,8 @@ function Layout() {
           <Route path="/login-usuario" element={<LoginUsuario />} />
           <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+          <Route path="/recuperar-senha-empresa" element={<RecuperarSenhaEmpresa />} />
+          <Route path="/recuperar-senha-ponto" element={<RecuperarSenhaPonto />} />
           <Route path="/gerenciar-contas" element={<GerenciarContas />} />
           <Route path="/personalizar-empresa" element={<PersonalizarEmpresa />} />
           <Route path="/personalizar-ponto" element={<PersonalizarPonto />} />

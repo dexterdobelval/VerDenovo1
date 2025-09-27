@@ -33,8 +33,10 @@ function PontosColeta() {
     .animate-delay-2 { animation-delay: 0.2s; }
     .animate-delay-3 { animation-delay: 0.3s; }
     .pulse { animation: pulse 2s ease-in-out infinite; }
-    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    .hover-lift { transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .hover-lift:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .hover-lift:hover .position-absolute { transform: translateX(0) !important; }
+    .text-purple { color: #8b5cf6; }
     .hover-scale { transition: transform 0.3s ease; }
     .hover-scale:hover { transform: scale(1.05); }
   `;
@@ -52,7 +54,7 @@ function PontosColeta() {
       cidade: "São Paulo",
       cep: "01234-567",
       telefone: "(11) 9999-8888",
-      horario: "08:00 - 18:00",
+      horario: "08:00 às 18:00",
       materiais: { papel: true, plastico: true, vidro: true, metal: false }
     },
     {
@@ -62,7 +64,7 @@ function PontosColeta() {
       cidade: "Rio de Janeiro",
       cep: "20123-456",
       telefone: "(21) 8888-7777",
-      horario: "07:00 - 17:00",
+      horario: "07:00 às 17:00",
       materiais: { papel: true, plastico: true, vidro: false, metal: true }
     },
     {
@@ -72,7 +74,7 @@ function PontosColeta() {
       cidade: "Belo Horizonte",
       cep: "30456-789",
       telefone: "(31) 7777-6666",
-      horario: "09:00 - 16:00",
+      horario: "09:00 às 16:00",
       materiais: { papel: true, plastico: true, vidro: true, metal: true }
     },
     {
@@ -82,7 +84,7 @@ function PontosColeta() {
       cidade: "Porto Alegre",
       cep: "90123-321",
       telefone: "(51) 6666-5555",
-      horario: "08:30 - 17:30",
+      horario: "08:30 às 17:30",
       materiais: { papel: false, plastico: true, vidro: true, metal: true }
     },
     {
@@ -92,7 +94,7 @@ function PontosColeta() {
       cidade: "Curitiba",
       cep: "80654-987",
       telefone: "(41) 5555-4444",
-      horario: "07:30 - 18:30",
+      horario: "07:30 às 18:30",
       materiais: { papel: true, plastico: false, vidro: true, metal: true }
     },
     {
@@ -102,7 +104,7 @@ function PontosColeta() {
       cidade: "Salvador",
       cep: "40987-123",
       telefone: "(71) 4444-3333",
-      horario: "08:00 - 17:00",
+      horario: "08:00 às 17:00",
       materiais: { papel: true, plastico: true, vidro: false, metal: false }
     }
   ];
@@ -150,84 +152,128 @@ function PontosColeta() {
 
 
   return (
-    <div className="pontos-coleta-page">
+    <div className="pontos-coleta-page" style={{background: '#f8f9fa', minHeight: '100vh', padding: '2rem 0'}}>
       <style>{animationStyles}</style>
+      <div className="container">
       <div className="row mb-5">
-        <div className="col-12 text-center animate-fadeInUp">
-          <h1 className="display-4 text-success mb-3 animate-slideInLeft">
-            <i className="bi bi-geo-alt me-3"></i>Pontos de Coleta
-          </h1>
-          <p className="lead text-muted mb-4 animate-fadeIn animate-delay-2">Encontre o ponto de coleta mais próximo de você</p>
-          <div className="d-inline-flex align-items-center bg-success text-white px-4 py-2 rounded-pill animate-scaleIn animate-delay-3 pulse">
-            <i className="bi bi-check-circle me-2"></i>
-            <span className="fw-bold">{pontos.length} pontos disponíveis</span>
+        <div className="col-12">
+          <div className="d-flex justify-content-between align-items-center mb-4 animate-fadeInUp">
+            <div>
+              <h1 className="display-5 fw-bold text-success mb-2 animate-slideInLeft">
+                Pontos de Coleta
+              </h1>
+              <p className="text-muted mb-0 animate-fadeIn animate-delay-1">Gerencie e visualize todos os pontos de coleta cadastrados</p>
+            </div>
+            <div className="d-flex align-items-center gap-3 animate-fadeIn animate-delay-2">
+              <div className="bg-light rounded-pill px-3 py-2">
+                <small className="text-muted fw-medium">
+                  <i className="bi bi-geo-alt text-success me-1"></i>
+                  {pontos.length} pontos ativos
+                </small>
+              </div>
+              <div className="bg-success bg-opacity-10 rounded-pill px-3 py-2">
+                <small className="text-success fw-bold">
+                  <i className="bi bi-check-circle me-1"></i>
+                  Sistema Online
+                </small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="row">
+      <div className="row g-4 animate-fadeInUp animate-delay-3">
         {pontos.map((ponto, index) => (
-          <div key={ponto.id} className="col-md-6 col-lg-4 mb-4">
-            <div className={`card h-100 border-0 shadow-sm position-relative overflow-hidden hover-lift animate-fadeInUp animate-delay-${(index % 3) + 1}`}>
+          <div key={ponto.id} className="col-lg-6 col-xl-4">
+            <div className={`card border-0 shadow-lg position-relative overflow-hidden hover-lift animate-fadeInUp animate-delay-${(index % 3) + 1}`} style={{borderRadius: '20px', background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)', transition: 'all 0.4s ease'}}>
               <div className="position-absolute top-0 end-0 m-3">
-                <span className="badge bg-success rounded-pill px-3 py-2">
-                  <i className="bi bi-check-circle me-1"></i>Ativo
-                </span>
+                <div className="d-flex align-items-center bg-success bg-opacity-10 rounded-pill px-3 py-1">
+                  <div className="bg-success rounded-circle me-2" style={{width: '8px', height: '8px', animation: 'pulse 2s infinite'}}></div>
+                  <small className="text-success fw-bold">Online</small>
+                </div>
               </div>
+              
               <div className="card-body p-4">
-                <div className="d-flex align-items-center mb-3">
-                  <div className="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                    <i className="bi bi-geo-alt text-success" style={{fontSize: '1.5rem'}}></i>
-                  </div>
-                  <div>
-                    <h5 className="card-title mb-1 text-success fw-bold">{ponto.nome}</h5>
-                    <p className="text-muted mb-0 small">{ponto.cidade}</p>
-                  </div>
+                <div className="mb-4">
+                  <h5 className="card-title mb-1 fw-bold d-flex align-items-center" style={{color: '#1f2937', fontSize: '1.25rem'}}>
+                    <i className="bi bi-geo-alt text-success me-2" style={{fontSize: '1.2rem'}}></i>
+                    {ponto.nome}
+                  </h5>
+                  <p className="text-muted mb-0" style={{fontSize: '0.9rem'}}>
+                    <i className="bi bi-geo me-1"></i>{ponto.cidade}
+                  </p>
                 </div>
                 
-                <div className="mb-3">
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="bi bi-house text-muted me-2"></i>
-                    <small className="text-muted">{ponto.endereco}</small>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="bi bi-clock text-muted me-2"></i>
-                    <small className="text-muted">{ponto.horario}</small>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="bi bi-telephone text-muted me-2"></i>
-                    <small className="text-muted">{ponto.telefone}</small>
+                <div className="mb-4">
+                  <div className="row g-2 mb-3">
+                    <div className="col-12">
+                      <div className="d-flex align-items-center p-2 rounded" style={{background: 'rgba(16, 185, 129, 0.05)'}}>
+                        <i className="bi bi-house text-success me-2"></i>
+                        <small className="text-dark fw-medium">{ponto.endereco}</small>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="d-flex align-items-center p-2 rounded" style={{background: 'rgba(59, 130, 246, 0.05)'}}>
+                        <i className="bi bi-clock text-primary me-2"></i>
+                        <small className="text-dark">{ponto.horario}</small>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="d-flex align-items-center p-2 rounded" style={{background: 'rgba(168, 85, 247, 0.05)'}}>
+                        <i className="bi bi-telephone text-purple me-2"></i>
+                        <small className="text-dark">{ponto.telefone}</small>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="mb-4">
-                  <p className="small text-success fw-bold mb-2">Materiais aceitos:</p>
-                  <div className="d-flex flex-wrap gap-1">
-                    {formatarMateriais(ponto.materiais).split(', ').map((material, index) => (
-                      <span key={index} className="badge bg-success bg-opacity-10 text-success border border-success">
-                        {material}
-                      </span>
-                    ))}
+                  <h6 className="text-success fw-bold mb-3 d-flex align-items-center" style={{fontSize: '1rem'}}>
+                    <i className="bi bi-recycle me-2" style={{fontSize: '1.3rem'}}></i>Materiais Aceitos
+                  </h6>
+                  <div className="d-flex flex-wrap gap-2">
+                    {formatarMateriais(ponto.materiais).split(', ').map((material, index) => {
+                      const materialIcons = {
+                        'Papel': 'bi-file-text',
+                        'Plástico': 'bi-cup',
+                        'Vidro': 'bi-cup-straw', 
+                        'Metal': 'bi-gear'
+                      };
+                      const colors = ['bg-primary', 'bg-success', 'bg-warning', 'bg-info'];
+                      return (
+                        <span key={index} className={`badge ${colors[index % colors.length]} bg-opacity-15 border border-opacity-25 rounded-pill px-3 py-2 d-flex align-items-center`} style={{fontSize: '0.8rem', fontWeight: '600'}}>
+                          <i className={`bi ${materialIcons[material] || 'bi-check-circle'} me-2`} style={{fontSize: '1rem'}}></i>
+                          {material}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
                 
                 <div className="d-grid gap-2">
                   <button 
-                    className="btn btn-success hover-lift"
+                    className="btn btn-success position-relative overflow-hidden" 
                     onClick={() => acessarPonto(ponto)}
+                    style={{borderRadius: '12px', padding: '12px', fontWeight: '600', background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none', boxShadow: '0 8px 25px rgba(16, 185, 129, 0.3)'}}
                   >
-                    <i className="bi bi-arrow-right-circle me-2"></i>Acessar Ponto
+                    <span className="position-relative" style={{zIndex: 2}}>
+                      <i className="bi bi-arrow-right-circle me-2"></i>Ver Detalhes
+                    </span>
+                    <div className="position-absolute top-0 start-0 w-100 h-100" style={{background: 'linear-gradient(45deg, rgba(255,255,255,0.2), transparent)', transform: 'translateX(-100%)', transition: 'transform 0.3s ease'}}></div>
                   </button>
                   {usuario?.tipo === 'admin' && (
                     <button 
-                      className="btn btn-danger btn-sm hover-scale"
+                      className="btn btn-outline-danger btn-sm"
                       onClick={() => excluirPonto(ponto.id)}
+                      style={{borderRadius: '8px', fontWeight: '500'}}
                     >
-                      <i className="bi bi-trash me-2"></i>Excluir
+                      <i className="bi bi-trash me-2"></i>Excluir Ponto
                     </button>
                   )}
                 </div>
               </div>
+              
+              <div className="position-absolute bottom-0 start-0 w-100" style={{height: '4px', background: 'linear-gradient(90deg, #10b981, #059669, #34d399)'}}></div>
             </div>
           </div>
         ))}
@@ -348,6 +394,7 @@ function PontosColeta() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

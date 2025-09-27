@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function RecuperarSenha() {
+function RecuperarSenhaEmpresa() {
   const [email, setEmail] = useState('');
   const [enviado, setEnviado] = useState(false);
   const [carregando, setCarregando] = useState(false);
@@ -92,7 +92,7 @@ function RecuperarSenha() {
             <i className="bi bi-key text-white"></i>
           </div>
           <h3 className="text-white mb-0 fw-bold">Recuperar Senha</h3>
-          <p className="text-white-50 mb-0 mt-2">Usuário</p>
+          <p className="text-white-50 mb-0 mt-2">Empresa</p>
         </div>
         
         <div className="p-4">
@@ -100,7 +100,7 @@ function RecuperarSenha() {
             <>
               <div className="alert alert-info border-0 rounded-3 mb-4">
                 <i className="bi bi-info-circle me-2"></i>
-                Digite seu email para receber as instruções
+                Digite o email da sua empresa para receber as instruções
               </div>
               
               <form onSubmit={handleSubmit}>
@@ -109,13 +109,13 @@ function RecuperarSenha() {
                     type="email"
                     className="form-control"
                     id="email"
-                    placeholder="seu@email.com"
+                    placeholder="empresa@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <label htmlFor="email">
-                    <i className="bi bi-envelope me-2"></i>Seu Email
+                    <i className="bi bi-envelope me-2"></i>Email da Empresa
                   </label>
                 </div>
                 
@@ -151,7 +151,7 @@ function RecuperarSenha() {
           )}
           
           <div className="text-center">
-            <Link to="/login-usuario" className="btn btn-outline-success rounded-3 px-4">
+            <Link to="/login-empresa" className="btn btn-outline-success rounded-3 px-4">
               <i className="bi bi-arrow-left me-2"></i>
               Voltar ao Login
             </Link>
@@ -162,4 +162,4 @@ function RecuperarSenha() {
   );
 }
 
-export default RecuperarSenha;
+export default RecuperarSenhaEmpresa;
