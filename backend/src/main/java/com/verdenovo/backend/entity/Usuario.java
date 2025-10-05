@@ -27,6 +27,8 @@ public class Usuario {
     @Column(name = "ativo")
     private Boolean ativo = true;
 
+    private String tipo = "usuario";
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -42,4 +44,7 @@ public class Usuario {
 
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 }

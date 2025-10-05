@@ -21,6 +21,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setEmail("vitorhugobate@gmail.com");
             admin.setSenha("123456789Vi");
             admin.setAtivo(true);
+            admin.setTipo("admin");
             
             usuarioRepository.save(admin);
             System.out.println("Conta admin criada: vitorhugobate@gmail.com");
