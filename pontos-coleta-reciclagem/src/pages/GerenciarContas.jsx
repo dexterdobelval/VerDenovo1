@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
 
 function GerenciarContas() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [contas, setContas] = useState({
     usuarios: [],
     empresas: [],
@@ -9,10 +13,38 @@ function GerenciarContas() {
   });
   const [contaSelecionada, setContaSelecionada] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    carregarContas();
-  }, []);
+    verificarAdmin();
+  }, [user]);
+
+  const verificarAdmin = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://verdenovo-backend.onrender.com/api/usuarios/verificar-admin/${user.email}`);
+      const isAdminUser = await response.json();
+      
+      if (!isAdminUser) {
+        alert('Acesso negado! Apenas administradores podem acessar esta página.');
+        navigate('/');
+        return;
+      }
+      
+      setIsAdmin(true);
+      carregarContas();
+    } catch (error) {
+      console.error('Erro ao verificar admin:', error);
+      navigate('/');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const carregarContas = async () => {
     try {
@@ -337,6 +369,21 @@ function GerenciarContas() {
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{minHeight: '100vh'}}>
+        <div className="text-center">
+          <div className="spinner-border text-danger" style={{width: '3rem', height: '3rem'}}></div>
+          <p className="mt-3 text-muted">Verificando permissões...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <div style={{background: '#ffffff', minHeight: '100vh', padding: '2rem 0'}}>

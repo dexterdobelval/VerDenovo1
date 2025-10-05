@@ -64,4 +64,13 @@ public class UsuarioController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/verificar-admin/{email}")
+    public ResponseEntity<Boolean> verificarAdmin(@PathVariable String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        if (usuario.isPresent()) {
+            return ResponseEntity.ok("admin".equals(usuario.get().getTipo()));
+        }
+        return ResponseEntity.ok(false);
+    }
 }
