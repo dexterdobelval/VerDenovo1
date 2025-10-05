@@ -1,5 +1,13 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+
 function Home() {
+  const { mostrarMensagemLogout } = useAuth();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const animationStyles = `
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(40px); }
@@ -58,6 +66,30 @@ function Home() {
 
   return (
     <div>
+      {/* Mensagem de Logout */}
+      {mostrarMensagemLogout && (
+        <div className="alert text-white text-center" style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 9999,
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          border: 'none',
+          borderRadius: '15px',
+          padding: '1rem 1.5rem',
+          fontSize: '1rem',
+          fontWeight: '600',
+          boxShadow: '0 10px 30px rgba(16, 185, 129, 0.4)',
+          animation: 'slideInRight 0.5s ease-out',
+          minWidth: '300px'
+        }}>
+          <div className="d-flex align-items-center">
+            <i className="bi bi-check-circle-fill me-2" style={{fontSize: '1.2rem'}}></i>
+            <span>Logout realizado com sucesso!</span>
+          </div>
+        </div>
+      )}
+      
       <style>{animationStyles}</style>
       {/* Hero Section */}
       <div className="hero-section mb-5 position-relative overflow-hidden" style={{minHeight: '70vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)', borderRadius: '25px', padding: '4rem 2rem'}}>

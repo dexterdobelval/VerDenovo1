@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 
 function LoginEmpresa() {
   const navigate = useNavigate();
@@ -109,7 +109,7 @@ function LoginEmpresa() {
         return;
       }
       
-      const empresa = database.buscarEmpresa(formData.email, formData.senha);
+      const empresa = await apiService.loginEmpresa(formData.email, formData.senha);
       
       if (empresa) {
         loginEmpresa(empresa);

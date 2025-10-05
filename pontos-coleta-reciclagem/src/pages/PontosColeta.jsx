@@ -91,6 +91,7 @@ function PontosColeta() {
   useEffect(() => {
     // Garantir que o body não tenha overflow hidden
     document.body.style.overflow = 'auto';
+    window.scrollTo(0, 0);
     
     // Excluir ponto chamado "ponto" se existir
     excluirPontoPorNome('ponto');
@@ -414,16 +415,17 @@ function PontosColeta() {
                   </h6>
                   <div className="d-flex flex-wrap gap-2">
                     {formatarMateriais(ponto.materiais).split(', ').map((material, index) => {
-                      const materialIcons = {
-                        'Papel': 'bi-file-text',
-                        'Plástico': 'bi-cup',
-                        'Vidro': 'bi-cup-straw', 
-                        'Metal': 'bi-gear'
+                      const materialConfig = {
+                        'Papel': { icon: 'bi-file-earmark-text-fill', color: '#3b82f6', bgClass: 'bg-primary' },
+                        'Plástico': { icon: 'bi-cup-fill', color: '#ef4444', bgClass: 'bg-danger' },
+                        'Vidro': { icon: 'bi-cup-straw', color: '#10b981', bgClass: 'bg-success' },
+                        'Metal': { icon: 'bi-gear-fill', color: '#f59e0b', bgClass: 'bg-warning' }
                       };
-                      const colors = ['bg-primary', 'bg-success', 'bg-warning', 'bg-info'];
+                      const config = materialConfig[material] || { icon: 'bi-check-circle', color: '#6b7280', bgClass: 'bg-secondary' };
+                      
                       return (
-                        <span key={index} className={`badge ${colors[index % colors.length]} bg-opacity-15 border border-opacity-25 rounded-pill px-3 py-2 d-flex align-items-center`} style={{fontSize: '0.8rem', fontWeight: '600'}}>
-                          <i className={`bi ${materialIcons[material] || 'bi-check-circle'} me-2`} style={{fontSize: '1rem'}}></i>
+                        <span key={index} className={`badge rounded-pill px-3 py-2 d-flex align-items-center`} style={{fontSize: '0.8rem', fontWeight: '600', color: 'white', backgroundColor: config.color}}>
+                          <i className={`bi ${config.icon} me-2`} style={{fontSize: '1rem'}}></i>
                           {material}
                         </span>
                       );
@@ -464,13 +466,25 @@ function PontosColeta() {
                 <div className="position-absolute" style={{top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%'}}></div>
                 <div className="position-absolute" style={{bottom: '-15px', left: '-15px', width: '80px', height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%'}}></div>
                 <div className="d-flex align-items-center position-relative">
-                  <div className="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3" style={{width: '60px', height: '60px', minWidth: '60px', backdropFilter: 'blur(10px)'}}>
-                    <i className="bi bi-geo-alt text-white" style={{fontSize: '1.5rem'}}></i>
+                  <div className="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3" style={{width: '60px', height: '60px', minWidth: '60px'}}>
+                    {pontoSelecionado.imagemPonto ? (
+                      <img 
+                        src={pontoSelecionado.imagemPonto} 
+                        alt="Foto do ponto"
+                        style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'}}
+                      />
+                    ) : (
+                      <img 
+                        src="/Verdenovologo.png" 
+                        alt="Logo VerDenovo"
+                        style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'}}
+                      />
+                    )}
                   </div>
                   <div>
                     <h4 className="modal-title text-white mb-1 fw-bold">{pontoSelecionado.nome}</h4>
                     <p className="text-white-50 mb-0">
-                      <i className="bi bi-geo me-2"></i>{pontoSelecionado.cidade}
+                      📍 {pontoSelecionado.cidade}
                     </p>
                   </div>
                 </div>

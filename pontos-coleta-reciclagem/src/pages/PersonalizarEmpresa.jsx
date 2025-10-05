@@ -20,6 +20,7 @@ function PersonalizarEmpresa() {
   });
   const [carregando, setCarregando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
+  const [erros, setErros] = useState({});
   const [imagemEmpresa, setImagemEmpresa] = useState(null);
   const [previewImagem, setPreviewImagem] = useState(null);
   const [mostrarCrop, setMostrarCrop] = useState(false);
@@ -41,16 +42,20 @@ function PersonalizarEmpresa() {
         horario: usuario.dados.horario || ''
       });
       
-      // Buscar dados atualizados da empresa no banco
-      const empresaAtual = database.listarEmpresas().find(e => e.email === usuario.dados.email);
-      if (empresaAtual && empresaAtual.imagemEmpresa) {
-        setPreviewImagem(empresaAtual.imagemEmpresa);
+      if (usuario.dados.imagemEmpresa) {
+        setPreviewImagem(usuario.dados.imagemEmpresa);
       }
     }
-  }, [usuario]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Limpar erro do campo quando usuário digitar
+    if (erros[name]) {
+      setErros(prev => ({ ...prev, [name]: false }));
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -112,7 +117,34 @@ function PersonalizarEmpresa() {
   };
   
   const salvarInformacoes = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    
+    // Validar campos obrigatórios
+    const novosErros = {};
+    if (!formData.nome) novosErros.nome = true;
+    if (!formData.cnpj) novosErros.cnpj = true;
+    if (!formData.endereco) novosErros.endereco = true;
+    if (!formData.cidade) novosErros.cidade = true;
+    if (!formData.cep) novosErros.cep = true;
+    if (!formData.telefone) novosErros.telefone = true;
+    if (!formData.email) novosErros.email = true;
+    
+    if (Object.keys(novosErros).length > 0) {
+      setErros(novosErros);
+      // Focar no primeiro campo com erro
+      const primeiroCampoErro = Object.keys(novosErros)[0];
+      setTimeout(() => {
+        const elemento = document.getElementById(primeiroCampoErro);
+        if (elemento) {
+          elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          elemento.focus();
+        }
+      }, 100);
+      return;
+    }
+    
+    setErros({});
+    
     setCarregando(true);
     
     try {
@@ -132,7 +164,6 @@ function PersonalizarEmpresa() {
       const empresaAtualizada = database.atualizarEmpresa(empresaId, dadosParaSalvar);
       
       if (empresaAtualizada) {
-        loginEmpresa(empresaAtualizada);
         setSucesso(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => setSucesso(false), 3000);
@@ -169,6 +200,10 @@ function PersonalizarEmpresa() {
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
     }
     .animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
     .animate-slideInLeft { animation: slideInLeft 0.6s ease-out; }
@@ -213,24 +248,28 @@ function PersonalizarEmpresa() {
               <p className="text-muted">Mantenha as informações da sua empresa sempre atualizadas</p>
             </div>
 
-            {/* Success Alert */}
+
+
+            {/* Success Alert Flutuante */}
             {sucesso && (
-              <div className="alert text-white text-center mb-4 animate-fadeInUp" style={{
+              <div className="alert text-white text-center" style={{
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                zIndex: 9999,
                 background: 'linear-gradient(135deg, #10b981, #059669)',
                 border: 'none',
-                borderRadius: '20px',
-                padding: '1.5rem',
-                fontSize: '1.1rem',
+                borderRadius: '15px',
+                padding: '1rem 1.5rem',
+                fontSize: '1rem',
                 fontWeight: '600',
                 boxShadow: '0 10px 30px rgba(16, 185, 129, 0.4)',
-                animation: 'pulse 1.5s ease-in-out 3'
+                animation: 'slideInRight 0.5s ease-out',
+                minWidth: '300px'
               }}>
-                <div className="text-center">
-                  <div className="fw-bold mb-1">
-                    <i className="bi bi-check-circle-fill me-2" style={{fontSize: '1.5rem'}}></i>
-                    ✅ ALTERAÇÕES SALVAS!
-                  </div>
-                  <small className="text-white-50">Todas as informações foram atualizadas com sucesso</small>
+                <div className="d-flex align-items-center">
+                  <i className="bi bi-check-circle-fill me-2" style={{fontSize: '1.2rem'}}></i>
+                  <span>Alterações salvas com sucesso!</span>
                 </div>
               </div>
             )}
@@ -247,15 +286,15 @@ function PersonalizarEmpresa() {
               }}>
                 <div className="position-absolute" style={{top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%'}}></div>
                 <div className="d-flex align-items-center position-relative">
-                  <div className="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3" style={{width: '60px', height: '60px', overflow: 'hidden'}}>
+                  <div className="rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '60px', height: '60px', backgroundColor: 'rgba(255,255,255,0.3)'}}>
                     {previewImagem ? (
                       <img 
                         src={previewImagem} 
                         alt="Logo da empresa"
-                        style={{width: '100%', height: '100%', objectFit: 'cover'}}
+                        style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'}}
                       />
                     ) : (
-                      <i className="bi bi-gear text-white" style={{fontSize: '1.5rem'}}></i>
+                      <i className="bi bi-building-fill text-white" style={{fontSize: '1.8rem'}}></i>
                     )}
                   </div>
                   <div>
@@ -272,16 +311,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="text" 
                           name="nome"
-                          className="form-control" 
+                          className={`form-control ${erros.nome ? 'border-danger' : ''}`}
                           id="nome"
                           placeholder="Nome da Empresa"
                           value={formData.nome}
                           onChange={handleChange}
                           required 
+                          style={erros.nome ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="nome">
                           <i className="bi bi-building me-2"></i>Nome da Empresa
                         </label>
+                        {erros.nome && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-6">
@@ -289,16 +341,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="text" 
                           name="cnpj"
-                          className="form-control" 
+                          className={`form-control ${erros.cnpj ? 'border-danger' : ''}`}
                           id="cnpj"
                           placeholder="00.000.000/0000-00"
                           value={formData.cnpj}
                           onChange={handleChange}
                           required 
+                          style={erros.cnpj ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="cnpj">
                           <i className="bi bi-card-text me-2"></i>CNPJ
                         </label>
+                        {erros.cnpj && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -309,16 +374,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="text" 
                           name="endereco"
-                          className="form-control" 
+                          className={`form-control ${erros.endereco ? 'border-danger' : ''}`}
                           id="endereco"
                           placeholder="Endereço completo"
                           value={formData.endereco}
                           onChange={handleChange}
                           required 
+                          style={erros.endereco ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="endereco">
                           <i className="bi bi-geo-alt me-2"></i>Endereço
                         </label>
+                        {erros.endereco && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -326,16 +404,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="text" 
                           name="cep"
-                          className="form-control" 
+                          className={`form-control ${erros.cep ? 'border-danger' : ''}`}
                           id="cep"
                           placeholder="00000-000"
                           value={formData.cep}
                           onChange={handleChange}
                           required 
+                          style={erros.cep ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="cep">
                           <i className="bi bi-mailbox me-2"></i>CEP
                         </label>
+                        {erros.cep && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -346,16 +437,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="text" 
                           name="cidade"
-                          className="form-control" 
+                          className={`form-control ${erros.cidade ? 'border-danger' : ''}`}
                           id="cidade"
                           placeholder="Cidade"
                           value={formData.cidade}
                           onChange={handleChange}
                           required 
+                          style={erros.cidade ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="cidade">
                           <i className="bi bi-building me-2"></i>Cidade
                         </label>
+                        {erros.cidade && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -363,16 +467,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="tel" 
                           name="telefone"
-                          className="form-control" 
+                          className={`form-control ${erros.telefone ? 'border-danger' : ''}`}
                           id="telefone"
                           placeholder="(00) 00000-0000"
                           value={formData.telefone}
                           onChange={handleChange}
                           required 
+                          style={erros.telefone ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="telefone">
                           <i className="bi bi-telephone me-2"></i>Telefone
                         </label>
+                        {erros.telefone && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -380,16 +497,29 @@ function PersonalizarEmpresa() {
                         <input 
                           type="email" 
                           name="email"
-                          className="form-control" 
+                          className={`form-control ${erros.email ? 'border-danger' : ''}`}
                           id="email"
                           placeholder="empresa@email.com"
                           value={formData.email}
                           onChange={handleChange}
                           required 
+                          style={erros.email ? {borderColor: '#dc2626', borderWidth: '2px', backgroundColor: '#fef2f2'} : {}}
                         />
                         <label htmlFor="email">
                           <i className="bi bi-envelope me-2"></i>Email
                         </label>
+                        {erros.email && (
+                          <div className="mt-2 p-2 rounded-3" style={{
+                            background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                            border: '1px solid #fca5a5',
+                            fontSize: '13px',
+                            color: '#dc2626',
+                            fontWeight: '600'
+                          }}>
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este campo é obrigatório para salvar
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -479,8 +609,8 @@ function PersonalizarEmpresa() {
                                     style={{width: '150px', height: '150px', objectFit: 'cover', border: '3px solid #10b981'}}
                                   />
                                 ) : (
-                                  <div className="bg-light border rounded-circle d-flex align-items-center justify-content-center" style={{width: '150px', height: '150px', border: '3px dashed #10b981 !important'}}>
-                                    <i className="bi bi-image text-success" style={{fontSize: '3rem'}}></i>
+                                  <div className="bg-light border rounded-circle d-flex align-items-center justify-content-center" style={{width: '150px', height: '150px', border: '3px dashed #10b981 !important', background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)'}}>
+                                    <i className="bi bi-building text-success" style={{fontSize: '3rem'}}></i>
                                   </div>
                                 )}
                                 {previewImagem && (
@@ -523,9 +653,10 @@ function PersonalizarEmpresa() {
                   <div className="row g-3 mt-4">
                     <div className="col-md-8">
                       <button 
-                        type="submit" 
+                        type="button" 
                         className="btn text-white w-100 hover-lift"
                         disabled={carregando}
+                        onClick={salvarInformacoes}
                         style={{
                           background: 'linear-gradient(135deg, #10b981, #059669)',
                           border: 'none',

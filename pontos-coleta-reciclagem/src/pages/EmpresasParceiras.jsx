@@ -50,6 +50,7 @@ function EmpresasParceiras() {
   `;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     carregarEmpresas();
   }, []);
   
@@ -206,15 +207,19 @@ function EmpresasParceiras() {
               <div className="modal-header position-relative overflow-hidden" style={{background: 'linear-gradient(135deg, #059669, #10b981)', borderRadius: '25px 25px 0 0', padding: '2rem'}}>
                 <div className="position-absolute" style={{top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%'}}></div>
                 <div className="d-flex align-items-center position-relative">
-                  <div className="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3" style={{width: '60px', height: '60px', backdropFilter: 'blur(10px)', overflow: 'hidden'}}>
+                  <div className="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3" style={{width: '60px', height: '60px', minWidth: '60px'}}>
                     {empresaSelecionada.imagemEmpresa ? (
                       <img 
                         src={empresaSelecionada.imagemEmpresa} 
                         alt={empresaSelecionada.nome || empresaSelecionada.nomeEmpresa}
-                        style={{width: '100%', height: '100%', objectFit: 'cover'}}
+                        style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'}}
                       />
                     ) : (
-                      <i className="bi bi-building text-white" style={{fontSize: '1.5rem'}}></i>
+                      <img 
+                        src="/Verdenovologo.png" 
+                        alt="Logo VerDenovo"
+                        style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'}}
+                      />
                     )}
                   </div>
                   <div>

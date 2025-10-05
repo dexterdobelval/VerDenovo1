@@ -84,6 +84,11 @@ function CadastrarPonto() {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
     .animate-slide-up { animation: slideInUp 0.6s ease-out; }
   `;
 
@@ -95,9 +100,15 @@ function CadastrarPonto() {
       // Gerar código único para o ponto
       const codigo = 'ECO' + Math.random().toString(36).substr(2, 6).toUpperCase();
       
+      // Combinar horários se fornecidos
+      const horario = dados.horarioAbertura && dados.horarioFechamento 
+        ? `${dados.horarioAbertura} às ${dados.horarioFechamento}`
+        : 'Horário não informado';
+      
       const dadosCompletos = {
         ...dados,
-        codigo
+        codigo,
+        horario
       };
       
       database.adicionarPonto(dadosCompletos);
@@ -334,46 +345,136 @@ function CadastrarPonto() {
       
       {/* Modal de Sucesso */}
       {mostrarModal && (
-        <div className="modal d-block animate-fadeIn" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content animate-scaleIn">
-              <div className="modal-header bg-success text-white">
-                <h5 className="modal-title">
-                  <i className="bi bi-check-circle me-2"></i>
-                  Ponto Cadastrado com Sucesso!
-                </h5>
+        <div className="modal d-block" style={{backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(5px)'}}>
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content" style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '25px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
+              overflow: 'hidden',
+              animation: 'slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                padding: '2rem',
+                textAlign: 'center',
+                position: 'relative'
+              }}>
+                <div style={{
+                  width: '100px',
+                  height: '100px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1rem',
+                  animation: 'bounce 2s infinite'
+                }}>
+                  <i className="bi bi-check-circle text-white" style={{fontSize: '3rem'}}></i>
+                </div>
+                <h3 className="text-white mb-2 fw-bold">Ponto Cadastrado!</h3>
+                <p className="text-white-50 mb-0">Suas credenciais de acesso foram geradas</p>
               </div>
-              <div className="modal-body text-center p-4">
-                <div className="alert alert-success">
-                  <h4 className="alert-heading">Suas Credenciais de Acesso</h4>
-                  <hr/>
-                  <div className="row">
-                    <div className="col-6">
-                      <strong>Código do Ponto:</strong><br/>
-                      <span className="fs-4 text-success fw-bold">{credenciais.codigo}</span>
-                    </div>
-                    <div className="col-6">
-                      <strong>Email:</strong><br/>
-                      <span className="fs-6 text-success fw-bold">{credenciais.email}</span>
+              
+              <div className="p-4">
+                <div className="text-center mb-4">
+                  <h5 className="text-success mb-3">
+                    <i className="bi bi-key me-2"></i>
+                    Credenciais de Acesso
+                  </h5>
+                  <p className="text-muted">Guarde essas informações para fazer login no sistema</p>
+                </div>
+                
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <div style={{
+                      background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                      border: '2px solid #bfdbfe',
+                      borderRadius: '20px',
+                      padding: '1.5rem',
+                      textAlign: 'center',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => navigator.clipboard.writeText(credenciais.email)}
+                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-5px)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                    >
+                      <div style={{
+                        width: '50px',
+                        height: '50px',
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 1rem'
+                      }}>
+                        <i className="bi bi-envelope text-white"></i>
+                      </div>
+                      <h6 className="text-primary fw-bold mb-2">Email de Acesso</h6>
+                      <div style={{
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: '#1d4ed8',
+                        wordBreak: 'break-all'
+                      }}>
+                        {credenciais.email}
+                      </div>
+                      <small className="text-muted d-block mt-2">
+                        <i className="bi bi-clipboard me-1"></i>
+                        Clique para copiar
+                      </small>
                     </div>
                   </div>
-                  <hr/>
-                  <small className="text-muted">Anote essas informações para fazer login</small>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-success hover-lift animate-bounce"
-                  onClick={() => {
-                    setMostrarModal(false);
-                    loginPonto({ codigo: credenciais.codigo, email: credenciais.email });
-                    navigate('/');
-                  }}
-                >
-                  <i className="bi bi-check-circle me-2"></i>
-                  Entrar Automaticamente
-                </button>
+                
+                <div style={{
+                  background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                  border: '2px solid #fcd34d',
+                  borderRadius: '15px',
+                  padding: '1rem',
+                  textAlign: 'center',
+                  marginBottom: '1.5rem'
+                }}>
+                  <i className="bi bi-info-circle text-amber-600 me-2"></i>
+                  <small className="text-amber-700 fw-medium">
+                    Anote essas informações em local seguro. Você precisará delas para acessar o sistema.
+                  </small>
+                </div>
+                
+                <div className="d-grid">
+                  <button 
+                    type="button" 
+                    className="btn text-white fw-bold py-3"
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      border: 'none',
+                      borderRadius: '15px',
+                      fontSize: '1.1rem',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                    onClick={() => {
+                      setMostrarModal(false);
+                      loginPonto({ codigo: credenciais.codigo, email: credenciais.email });
+                      navigate('/');
+                    }}
+                  >
+                    <i className="bi bi-box-arrow-in-right me-2"></i>
+                    Entrar Automaticamente no Sistema
+                  </button>
+                </div>
               </div>
             </div>
           </div>

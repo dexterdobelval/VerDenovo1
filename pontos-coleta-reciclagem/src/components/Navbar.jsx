@@ -10,7 +10,7 @@ function Navbar() {
   
   const animationStyles = `
     @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-60px); }
+      from { opacity: 0; transform: translateX(-10px); }
       to { opacity: 1; transform: translateX(0); }
     }
     @keyframes fadeIn {
@@ -28,7 +28,7 @@ function Navbar() {
       0%, 100% { transform: scale(1); filter: brightness(1); }
       50% { transform: scale(1.08); filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
     }
-    .animate-slideInLeft { animation: slideInLeft 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-slideInLeft { animation: slideInLeft 0.3s ease-out; }
     .animate-fadeIn { animation: fadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
     .animate-logo { animation: logoEntrance 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
     .animate-delay-1 { animation-delay: 0.1s; animation-fill-mode: both; }
@@ -64,7 +64,7 @@ function Navbar() {
   return (
     <>
       <style>{animationStyles}</style>
-      <nav className="navbar navbar-dark bg-success fixed-top animate-slideInLeft" style={{height: '72px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 1030}}>
+      <nav className="navbar navbar-dark bg-success fixed-top" style={{height: '72px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 1030}}>
       <div className="container-fluid px-3">
         <div className="d-flex align-items-center">
           <button className="btn btn-link p-2 me-3 text-white hover-scale" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" style={{border: 'none'}}>

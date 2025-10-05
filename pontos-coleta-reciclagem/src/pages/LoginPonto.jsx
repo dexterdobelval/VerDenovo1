@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 
 function LoginPonto() {
   const navigate = useNavigate();
@@ -103,13 +103,7 @@ function LoginPonto() {
     setCarregando(true);
     
     try {
-      // Buscar por email primeiro
-      let ponto = database.pontos.find(p => p.email === formData.email && p.senha === formData.senha && p.ativo);
-      
-      // Se não encontrar por email, tentar por código (compatibilidade)
-      if (!ponto) {
-        ponto = database.buscarPonto(formData.email, formData.senha);
-      }
+      const ponto = await apiService.loginPonto(formData.email, formData.senha);
       
       if (ponto) {
         loginPonto(ponto, lembrarMe);
