@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 
 function GerenciarContas() {
   const [contas, setContas] = useState({
@@ -14,27 +14,46 @@ function GerenciarContas() {
     carregarContas();
   }, []);
 
-  const carregarContas = () => {
-    const usuarios = database.listarUsuarios().map(u => ({
-      ...u,
-      nome: u.nome || u.nomeCompleto || 'Usuário',
-      ativo: u.ativo !== undefined ? u.ativo : true
-    }));
-    
-    const empresas = database.listarEmpresas().map(e => ({
-      ...e,
-      nome: e.nome || e.nomeEmpresa || 'Empresa',
-      ativo: e.ativo !== undefined ? e.ativo : true
-    }));
-    
-    const pontos = database.listarPontos().map(p => ({
-      ...p,
-      nome: p.nome || p.nomePonto || 'Ponto de Coleta',
-      email: p.email || p.codigo || 'N/A',
-      ativo: p.ativo !== undefined ? p.ativo : true
-    }));
-    
-    setContas({ usuarios, empresas, pontos });
+  const carregarContas = async () => {
+    try {
+      const [usuariosData, empresasData, pontosData] = await Promise.all([
+        apiService.listarUsuarios(),
+        apiService.listarEmpresas(),
+        apiService.listarPontos()
+      ]);
+      
+      const usuarios = usuariosData.map(u => ({
+        ...u,
+        nome: u.nome || u.nomeCompleto || 'Usuário',
+        ativo: u.ativo !== undefined ? u.ativo : true,
+        dataCadastro: u.dataCadastro || new Date().toISOString()
+      }));
+      
+      const empresas = empresasData.map(e => ({
+        ...e,
+        nome: e.nome || e.nomeEmpresa || 'Empresa',
+        ativo: e.ativo !== undefined ? e.ativo : true,
+        dataCadastro: e.dataCadastro || new Date().toISOString()
+      }));
+      
+      const pontos = pontosData.map(p => ({
+        ...p,
+        nome: p.nome || p.nomePonto || 'Ponto de Coleta',
+        email: p.email || p.codigo || 'N/A',
+        ativo: p.ativo !== undefined ? p.ativo : true,
+        dataCadastro: p.dataCadastro || new Date().toISOString(),
+        materiais: {
+          papel: p.papel || false,
+          plastico: p.plastico || false,
+          vidro: p.vidro || false,
+          metal: p.metal || false
+        }
+      }));
+      
+      setContas({ usuarios, empresas, pontos });
+    } catch (error) {
+      console.error('Erro ao carregar contas:', error);
+    }
   };
 
   const animationStyles = `
