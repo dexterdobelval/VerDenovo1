@@ -16,6 +16,7 @@ import RecuperarSenha from './pages/RecuperarSenha';
 import RecuperarSenhaEmpresa from './pages/RecuperarSenhaEmpresa';
 import RecuperarSenhaPonto from './pages/RecuperarSenhaPonto';
 import GerenciarContas from './pages/GerenciarContas';
+import GerenciarContasSimples from './pages/GerenciarContasSimples';
 import PersonalizarEmpresa from './pages/PersonalizarEmpresa';
 import PersonalizarPonto from './pages/PersonalizarPonto';
 import MateriaisReciclaveis from './pages/MateriaisReciclaveis';
@@ -43,7 +44,7 @@ function Layout() {
   return (
     <div className="App">
       <Navbar />
-      <div className="container" style={{marginTop: '88px'}}>
+      <div className="container" style={{marginTop: isAuthPage ? '0' : '88px'}}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/pontos" element={<PontosColeta />} />
@@ -58,6 +59,7 @@ function Layout() {
           <Route path="/recuperar-senha-empresa" element={<RecuperarSenhaEmpresa />} />
           <Route path="/recuperar-senha-ponto" element={<RecuperarSenhaPonto />} />
           <Route path="/gerenciar-contas" element={<GerenciarContas />} />
+          <Route path="/gerenciar-contas-teste" element={<GerenciarContasSimples />} />
           <Route path="/personalizar-empresa" element={<PersonalizarEmpresa />} />
           <Route path="/personalizar-ponto" element={<PersonalizarPonto />} />
           <Route path="/materiais" element={<MateriaisReciclaveis />} />

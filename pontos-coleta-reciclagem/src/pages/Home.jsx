@@ -1,5 +1,13 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+
 function Home() {
+  const { mostrarMensagemLogout } = useAuth();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const animationStyles = `
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(40px); }
@@ -58,6 +66,30 @@ function Home() {
 
   return (
     <div>
+      {/* Mensagem de Logout */}
+      {mostrarMensagemLogout && (
+        <div className="alert text-white text-center" style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 9999,
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          border: 'none',
+          borderRadius: '15px',
+          padding: '1rem 1.5rem',
+          fontSize: '1rem',
+          fontWeight: '600',
+          boxShadow: '0 10px 30px rgba(16, 185, 129, 0.4)',
+          animation: 'slideInRight 0.5s ease-out',
+          minWidth: '300px'
+        }}>
+          <div className="d-flex align-items-center">
+            <i className="bi bi-check-circle-fill me-2" style={{fontSize: '1.2rem'}}></i>
+            <span>Logout realizado com sucesso!</span>
+          </div>
+        </div>
+      )}
+      
       <style>{animationStyles}</style>
       {/* Hero Section */}
       <div className="hero-section mb-5 position-relative overflow-hidden" style={{minHeight: '70vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)', borderRadius: '25px', padding: '4rem 2rem'}}>
@@ -85,19 +117,11 @@ function Home() {
             </div>
           </div>
           <div className="col-lg-6 animate-slideInRight">
-            <div className="position-relative text-center">
-              <div className="position-absolute" style={{top: '-15px', right: '15%', width: '50px', height: '50px', background: '#059669', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3, boxShadow: '0 8px 25px rgba(5, 150, 105, 0.3)'}}>
-                <i className="bi bi-recycle text-white glow" style={{fontSize: '1.5rem'}}></i>
-              </div>
+            <div className="text-center">
               <img src="/image.png" 
                    className="img-fluid hover-scale" 
                    alt="Sustentabilidade" 
                    style={{borderRadius: '20px', maxWidth: '100%', height: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', transform: 'perspective(1000px) rotateY(-3deg)', transition: 'transform 0.3s ease'}} />
-              <div className="position-absolute bottom-4 start-4 bg-white rounded-pill px-3 py-2" style={{boxShadow: '0 4px 15px rgba(0,0,0,0.1)', backdropFilter: 'blur(10px)'}}>
-                <small className="text-success fw-bold">
-                  <i className="bi bi-check-circle me-1"></i>Eco-Friendly
-                </small>
-              </div>
             </div>
           </div>
         </div>
@@ -112,14 +136,14 @@ function Home() {
         </div>
         <div className="carousel-inner">
           <div className="carousel-item active">
-            <img src="/src/assets/natureza1.avif" className="d-block w-100" alt="Coleta Seletiva" style={{height: '400px', objectFit: 'cover'}} />
+            <img src="/natureza1.avif" className="d-block w-100" alt="Coleta Seletiva" style={{height: '400px', objectFit: 'cover'}} />
             <div className="carousel-caption d-none d-md-block">
               <h5 className="text-white">Coleta Seletiva</h5>
               <p className="text-white">Separação correta dos materiais para reciclagem eficiente</p>
             </div>
           </div>
           <div className="carousel-item">
-            <img src="/src/assets/natureza2.jpg" className="d-block w-100" alt="Economia Circular" style={{height: '400px', objectFit: 'cover'}} />
+            <img src="/natureza2.jpg" className="d-block w-100" alt="Economia Circular" style={{height: '400px', objectFit: 'cover'}} />
             <div className="carousel-caption d-none d-md-block">
               <h5 className="text-white">Economia Circular</h5>
               <p className="text-white">Reduzir, reutilizar e reciclar para um mundo sustentável</p>

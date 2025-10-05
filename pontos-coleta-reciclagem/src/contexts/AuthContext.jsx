@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
@@ -11,26 +11,90 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(() => {
+    // Sempre verificar localStorage primeiro para manter login entre abas
+    const savedLocal = localStorage.getItem('usuario_logado');
+    if (savedLocal) return JSON.parse(savedLocal);
+    
+    const savedSession = sessionStorage.getItem('usuario_logado');
+    return savedSession ? JSON.parse(savedSession) : null;
+  });
+  const [mostrarMensagemLogout, setMostrarMensagemLogout] = useState(false);
 
-  const loginEmpresa = (dadosEmpresa) => {
-    setUsuario({ tipo: 'empresa', dados: dadosEmpresa });
+  const salvarUsuario = (dadosUsuario, lembrar = false) => {
+    // Sempre salvar no localStorage para manter entre abas
+    localStorage.setItem('usuario_logado', JSON.stringify(dadosUsuario));
+    
+    if (!lembrar) {
+      // Se não marcou "lembrar", também salvar no sessionStorage como indicador
+      sessionStorage.setItem('usuario_temporario', 'true');
+    } else {
+      sessionStorage.removeItem('usuario_temporario');
+    }
   };
 
-  const loginPonto = (dadosPonto) => {
-    setUsuario({ tipo: 'ponto', dados: dadosPonto });
+  useEffect(() => {
+    if (!usuario) {
+      localStorage.removeItem('usuario_logado');
+      sessionStorage.removeItem('usuario_logado');
+    }
+  }, [usuario]);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedLocal = localStorage.getItem('usuario_logado');
+      const savedSession = sessionStorage.getItem('usuario_logado');
+      const savedUser = savedLocal ? JSON.parse(savedLocal) : (savedSession ? JSON.parse(savedSession) : null);
+      
+      if (savedUser && (!usuario || JSON.stringify(usuario) !== JSON.stringify(savedUser))) {
+        setUsuario(savedUser);
+      } else if (!savedUser && usuario) {
+        setUsuario(null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, [usuario]);
+
+  const loginEmpresa = (dadosEmpresa, lembrar = false) => {
+    const usuario = { tipo: 'empresa', dados: dadosEmpresa };
+    setUsuario(usuario);
+    salvarUsuario(usuario, lembrar);
   };
 
-  const loginAdmin = () => {
-    setUsuario({ tipo: 'admin', dados: { email: 'vitorhugobate@gmail.com' } });
+  const loginPonto = (dadosPonto, lembrar = false) => {
+    const usuario = { tipo: 'ponto', dados: dadosPonto };
+    setUsuario(usuario);
+    salvarUsuario(usuario, lembrar);
   };
 
-  const loginUsuario = (dadosUsuario) => {
-    setUsuario({ tipo: 'usuario', dados: dadosUsuario });
+  const loginAdmin = (lembrar = false) => {
+    const usuario = { tipo: 'admin', dados: { email: 'vitorhugobate@gmail.com', nome: 'Administrador VerDenovo' } };
+    setUsuario(usuario);
+    salvarUsuario(usuario, lembrar);
+  };
+
+  const loginUsuario = (dadosUsuario, lembrar = false) => {
+    const usuario = { tipo: 'usuario', dados: dadosUsuario };
+    setUsuario(usuario);
+    salvarUsuario(usuario, lembrar);
   };
 
   const logout = () => {
     setUsuario(null);
+    localStorage.removeItem('usuario_logado');
+    sessionStorage.removeItem('usuario_logado');
+    sessionStorage.removeItem('usuario_temporario');
+    setMostrarMensagemLogout(true);
+    setTimeout(() => setMostrarMensagemLogout(false), 3000);
+    window.location.href = '/';
+    setTimeout(() => window.location.reload(), 100);
   };
 
   const isLogado = () => {
@@ -45,7 +109,8 @@ export const AuthProvider = ({ children }) => {
       loginAdmin,
       loginUsuario,
       logout,
-      isLogado
+      isLogado,
+      mostrarMensagemLogout
     }}>
       {children}
     </AuthContext.Provider>

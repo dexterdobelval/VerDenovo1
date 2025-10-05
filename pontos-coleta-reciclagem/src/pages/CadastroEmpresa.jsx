@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { database } from '../services/database';
+import { useAuth } from '../contexts/AuthContext';
 
 function CadastroEmpresa() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function CadastroEmpresa() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [etapaAtual, setEtapaAtual] = useState(1);
+  const { loginEmpresa } = useAuth();
 
   const styles = `
     .cadastro-empresa-container {
@@ -145,11 +147,12 @@ function CadastroEmpresa() {
     
     try {
       database.adicionarEmpresa(formData);
-      alert('Empresa cadastrada com sucesso!');
+      alert('Empresa cadastrada com sucesso! Fazendo login...');
       
       setTimeout(() => {
-        navigate('/login-empresa');
-      }, 2000);
+        loginEmpresa({ email: formData.email, nome: formData.nomeEmpresa });
+        navigate('/');
+      }, 1500);
     } catch (error) {
       alert('Erro ao cadastrar empresa');
     }
