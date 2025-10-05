@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { database } from '../services/database';
+import { useAuth } from '../contexts/AuthContext';
 
 function CadastrarPonto() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -10,6 +11,7 @@ function CadastrarPonto() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [credenciais, setCredenciais] = useState({ codigo: '', senha: '' });
   const navigate = useNavigate();
+  const { loginPonto } = useAuth();
   
   const styles = `
     .cadastro-ponto-container {
@@ -365,11 +367,12 @@ function CadastrarPonto() {
                   className="btn btn-success hover-lift animate-bounce"
                   onClick={() => {
                     setMostrarModal(false);
-                    navigate('/login-ponto');
+                    loginPonto({ codigo: credenciais.codigo, email: credenciais.email });
+                    navigate('/');
                   }}
                 >
-                  <i className="bi bi-box-arrow-in-right me-2"></i>
-                  Ir para Login
+                  <i className="bi bi-check-circle me-2"></i>
+                  Entrar Automaticamente
                 </button>
               </div>
             </div>

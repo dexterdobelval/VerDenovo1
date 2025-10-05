@@ -11,6 +11,7 @@ function LoginPonto() {
     senha: ''
   });
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [lembrarMe, setLembrarMe] = useState(false);
   const [carregando, setCarregando] = useState(false);
 
   const styles = `
@@ -102,10 +103,16 @@ function LoginPonto() {
     setCarregando(true);
     
     try {
-      const ponto = database.buscarPonto(formData.email, formData.senha);
+      // Buscar por email primeiro
+      let ponto = database.pontos.find(p => p.email === formData.email && p.senha === formData.senha && p.ativo);
+      
+      // Se não encontrar por email, tentar por código (compatibilidade)
+      if (!ponto) {
+        ponto = database.buscarPonto(formData.email, formData.senha);
+      }
       
       if (ponto) {
-        loginPonto(ponto);
+        loginPonto(ponto, lembrarMe);
         navigate('/personalizar-ponto');
       } else {
         alert('Email ou senha incorretos!');
@@ -171,6 +178,20 @@ function LoginPonto() {
               >
                 <i className={`bi ${mostrarSenha ? 'bi-eye-slash' : 'bi-eye'}`}></i>
               </button>
+            </div>
+            
+            <div className="form-check mb-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="lembrarMePonto"
+                checked={lembrarMe}
+                onChange={(e) => setLembrarMe(e.target.checked)}
+              />
+              <label className="form-check-label text-muted" htmlFor="lembrarMePonto">
+                <i className="bi bi-bookmark-check me-2"></i>
+                Lembrar de mim
+              </label>
             </div>
             
             <div className="d-grid mb-4">

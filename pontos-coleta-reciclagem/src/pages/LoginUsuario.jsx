@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { database } from '../services/database';
 
 function LoginUsuario() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ function LoginUsuario() {
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [lembrarMe, setLembrarMe] = useState(false);
   const { loginUsuario, loginAdmin } = useAuth();
   const navigate = useNavigate();
 
@@ -96,11 +98,16 @@ function LoginUsuario() {
     try {
       // Verificar se é admin
       if (email === 'vitorhugobate@gmail.com' && senha === '123456789Vi') {
-        loginAdmin();
+        loginAdmin(lembrarMe);
         navigate('/');
       } else if (email && senha) {
-        loginUsuario({ email });
-        navigate('/');
+        const usuario = database.buscarUsuario(email, senha);
+        if (usuario) {
+          loginUsuario(usuario, lembrarMe);
+          navigate('/');
+        } else {
+          setErro('Email ou senha incorretos');
+        }
       } else {
         setErro('Email e senha são obrigatórios');
       }
@@ -167,6 +174,20 @@ function LoginUsuario() {
               >
                 <i className={`bi ${mostrarSenha ? 'bi-eye-slash' : 'bi-eye'}`}></i>
               </button>
+            </div>
+            
+            <div className="form-check mb-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="lembrarMe"
+                checked={lembrarMe}
+                onChange={(e) => setLembrarMe(e.target.checked)}
+              />
+              <label className="form-check-label text-muted" htmlFor="lembrarMe">
+                <i className="bi bi-bookmark-check me-2"></i>
+                Lembrar de mim
+              </label>
             </div>
             
             <div className="d-grid mb-4">

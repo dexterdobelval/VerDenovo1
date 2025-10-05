@@ -21,10 +21,6 @@ function FAQ() {
     .animate-delay-2 { animation-delay: 0.4s; animation-fill-mode: both; }
   `;
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const [messages, setMessages] = useState([
     {
       type: 'bot',
@@ -38,6 +34,7 @@ function FAQ() {
     }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const messagesEndRef = useRef(null);
 
   const respostas = {
@@ -50,13 +47,22 @@ function FAQ() {
     '7': 'Para outras dúvidas, entre em contato conosco pelo email: contato@verdenovo.com.br\n\nNossa equipe responderá sua pergunta o mais breve possível!'
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+    setIsInitialLoad(false);
+  }, []);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (!isInitialLoad) {
+      scrollToBottom();
+    }
+  }, [messages, isInitialLoad]);
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;

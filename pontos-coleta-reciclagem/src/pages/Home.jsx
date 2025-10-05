@@ -85,19 +85,11 @@ function Home() {
             </div>
           </div>
           <div className="col-lg-6 animate-slideInRight">
-            <div className="position-relative text-center">
-              <div className="position-absolute" style={{top: '-15px', right: '15%', width: '50px', height: '50px', background: '#059669', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3, boxShadow: '0 8px 25px rgba(5, 150, 105, 0.3)'}}>
-                <i className="bi bi-recycle text-white glow" style={{fontSize: '1.5rem'}}></i>
-              </div>
+            <div className="text-center">
               <img src="/image.png" 
                    className="img-fluid hover-scale" 
                    alt="Sustentabilidade" 
                    style={{borderRadius: '20px', maxWidth: '100%', height: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', transform: 'perspective(1000px) rotateY(-3deg)', transition: 'transform 0.3s ease'}} />
-              <div className="position-absolute bottom-4 start-4 bg-white rounded-pill px-3 py-2" style={{boxShadow: '0 4px 15px rgba(0,0,0,0.1)', backdropFilter: 'blur(10px)'}}>
-                <small className="text-success fw-bold">
-                  <i className="bi bi-check-circle me-1"></i>Eco-Friendly
-                </small>
-              </div>
             </div>
           </div>
         </div>
