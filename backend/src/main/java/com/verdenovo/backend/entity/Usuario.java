@@ -27,7 +27,7 @@ public class Usuario {
     @Column(name = "ativo")
     private Boolean ativo = true;
 
-    private String tipo = "usuario";
+    private String tipo = "usuario"; // Campo tipo para identificar admin
 
     // Getters and Setters
     public Long getId() { return id; }
