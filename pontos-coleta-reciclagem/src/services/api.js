@@ -1,7 +1,7 @@
 // API service para conectar com backend Spring Boot
 class ApiService {
   constructor() {
-    this.baseURL = 'http://localhost:8081/api';
+    this.baseURL = 'https://verdenovo-backend.onrender.com/api';
   }
 
   // Usuários
