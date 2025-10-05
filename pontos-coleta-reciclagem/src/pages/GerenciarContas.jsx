@@ -90,7 +90,7 @@ function GerenciarContas() {
       <div className="container">
         {/* Header */}
         <div className="text-center mb-5">
-          <div className="d-inline-block p-3 rounded-circle mb-3" style={{background: 'linear-gradient(135deg, #dc2626, #b91c1c)', boxShadow: '0 10px 30px rgba(220, 38, 38, 0.3)'}}>
+          <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style={{width: '80px', height: '80px', background: 'linear-gradient(135deg, #dc2626, #b91c1c)', boxShadow: '0 10px 30px rgba(220, 38, 38, 0.3)'}}>
             <i className="bi bi-shield-lock text-white" style={{fontSize: '2.5rem'}}></i>
           </div>
           <h1 className="display-4 fw-bold text-danger mb-2">Painel Administrativo</h1>
