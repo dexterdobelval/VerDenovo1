@@ -46,6 +46,32 @@ class ApiService {
     }
   }
 
+  async atualizarUsuario(id, dadosAtualizados) {
+    try {
+      const response = await fetch(`${this.baseURL}/usuarios/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosAtualizados)
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+      throw error;
+    }
+  }
+
+  async excluirUsuario(id) {
+    try {
+      const response = await fetch(`${this.baseURL}/usuarios/${id}`, {
+        method: 'DELETE'
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Erro ao excluir usuário:', error);
+      throw error;
+    }
+  }
+
   // Empresas
   async listarEmpresas() {
     try {
@@ -102,6 +128,18 @@ class ApiService {
     }
   }
 
+  async excluirEmpresa(id) {
+    try {
+      const response = await fetch(`${this.baseURL}/empresas/${id}`, {
+        method: 'DELETE'
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Erro ao excluir empresa:', error);
+      throw error;
+    }
+  }
+
   // Pontos de Coleta
   async listarPontos() {
     try {
@@ -154,6 +192,18 @@ class ApiService {
       return await response.json();
     } catch (error) {
       console.error('Erro ao atualizar ponto:', error);
+      throw error;
+    }
+  }
+
+  async excluirPonto(id) {
+    try {
+      const response = await fetch(`${this.baseURL}/pontos/${id}`, {
+        method: 'DELETE'
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Erro ao excluir ponto:', error);
       throw error;
     }
   }

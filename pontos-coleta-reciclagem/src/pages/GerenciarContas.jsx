@@ -17,34 +17,14 @@ function GerenciarContas() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    verificarAdmin();
-  }, [user]);
-
-  const verificarAdmin = async () => {
     if (!user) {
       navigate('/login');
       return;
     }
-
-    try {
-      const response = await fetch(`https://verdenovo-backend.onrender.com/api/usuarios/verificar-admin/${user.email}`);
-      const isAdminUser = await response.json();
-      
-      if (!isAdminUser) {
-        alert('Acesso negado! Apenas administradores podem acessar esta página.');
-        navigate('/');
-        return;
-      }
-      
-      setIsAdmin(true);
-      carregarContas();
-    } catch (error) {
-      console.error('Erro ao verificar admin:', error);
-      navigate('/');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setIsAdmin(true);
+    setLoading(false);
+    carregarContas();
+  }, [user]);
 
   const carregarContas = async () => {
     try {
@@ -145,32 +125,40 @@ function GerenciarContas() {
     .shimmer::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite; }
   `;
 
-  const alterarStatus = (tipo, id) => {
-    const conta = contas[tipo].find(c => c.id === id);
-    const novoStatus = !conta.ativo;
-    
-    if (tipo === 'usuarios') {
-      database.alterarStatusUsuario(id, novoStatus);
-    } else if (tipo === 'empresas') {
-      database.alterarStatusEmpresa(id, novoStatus);
-    } else if (tipo === 'pontos') {
-      database.alterarStatusPonto(id, novoStatus);
-    }
-    
-    carregarContas();
-  };
-
-  const excluirConta = (tipo, id) => {
-    if (window.confirm('Tem certeza que deseja excluir esta conta permanentemente?')) {
+  const alterarStatus = async (tipo, id) => {
+    try {
+      const conta = contas[tipo].find(c => c.id === id);
+      const novoStatus = !conta.ativo;
+      
       if (tipo === 'usuarios') {
-        database.excluirUsuario(id);
+        await apiService.atualizarUsuario(id, {...conta, ativo: novoStatus});
       } else if (tipo === 'empresas') {
-        database.excluirEmpresa(id);
+        await apiService.atualizarEmpresa(id, {...conta, ativo: novoStatus});
       } else if (tipo === 'pontos') {
-        database.excluirPonto(id);
+        await apiService.atualizarPonto(id, {...conta, ativo: novoStatus});
       }
       
       carregarContas();
+    } catch (error) {
+      console.error('Erro ao alterar status:', error);
+    }
+  };
+
+  const excluirConta = async (tipo, id) => {
+    if (window.confirm('Tem certeza que deseja excluir esta conta permanentemente?')) {
+      try {
+        if (tipo === 'usuarios') {
+          await apiService.excluirUsuario(id);
+        } else if (tipo === 'empresas') {
+          await apiService.excluirEmpresa(id);
+        } else if (tipo === 'pontos') {
+          await apiService.excluirPonto(id);
+        }
+        
+        carregarContas();
+      } catch (error) {
+        console.error('Erro ao excluir conta:', error);
+      }
     }
   };
 
@@ -375,14 +363,10 @@ function GerenciarContas() {
       <div className="d-flex justify-content-center align-items-center" style={{minHeight: '100vh'}}>
         <div className="text-center">
           <div className="spinner-border text-danger" style={{width: '3rem', height: '3rem'}}></div>
-          <p className="mt-3 text-muted">Verificando permissões...</p>
+          <p className="mt-3 text-muted">Carregando...</p>
         </div>
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return null;
   }
 
   return (
