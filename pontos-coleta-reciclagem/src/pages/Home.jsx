@@ -136,14 +136,14 @@ function Home() {
         </div>
         <div className="carousel-inner">
           <div className="carousel-item active">
-            <img src="https://picsum.photos/1200/400?random=1" className="d-block w-100" alt="Coleta Seletiva" style={{height: '400px', objectFit: 'cover'}} />
+            <img src="/natureza1.avif" className="d-block w-100" alt="Coleta Seletiva" style={{height: '400px', objectFit: 'cover'}} />
             <div className="carousel-caption d-none d-md-block">
               <h5 className="text-white">Coleta Seletiva</h5>
               <p className="text-white">Separação correta dos materiais para reciclagem eficiente</p>
             </div>
           </div>
           <div className="carousel-item">
-            <img src="https://picsum.photos/1200/400?random=2" className="d-block w-100" alt="Economia Circular" style={{height: '400px', objectFit: 'cover'}} />
+            <img src="/natureza2.jpg" className="d-block w-100" alt="Economia Circular" style={{height: '400px', objectFit: 'cover'}} />
             <div className="carousel-caption d-none d-md-block">
               <h5 className="text-white">Economia Circular</h5>
               <p className="text-white">Reduzir, reutilizar e reciclar para um mundo sustentável</p>
