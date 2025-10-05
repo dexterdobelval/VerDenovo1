@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
 
 function GerenciarContas() {
-  const { user } = useAuth();
+  const { usuario } = useAuth();
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
   const [empresas, setEmpresas] = useState([]);
@@ -12,12 +12,15 @@ function GerenciarContas() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    console.log('Usuario:', usuario);
+    if (!usuario || !usuario.dados) {
+      console.log('Redirecionando para login');
       navigate('/login-usuario');
       return;
     }
+    console.log('Usuário logado, carregando dados');
     carregarDados();
-  }, [user]);
+  }, [usuario]);
 
   const carregarDados = async () => {
     try {
