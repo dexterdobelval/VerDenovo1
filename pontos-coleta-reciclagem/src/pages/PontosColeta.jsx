@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 import { excluirPontoPorNome } from '../utils/excluirPonto';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -96,8 +96,7 @@ function PontosColeta() {
     // Excluir ponto chamado "ponto" se existir
     excluirPontoPorNome('ponto');
     
-    const pontosCadastrados = database.listarPontos().filter(p => p.ativo !== false);
-    setPontos(pontosCadastrados);
+    carregarPontos();
     
     // Cleanup
     return () => {
@@ -105,6 +104,15 @@ function PontosColeta() {
       document.body.classList.remove('modal-open');
     };
   }, []);
+  
+  const carregarPontos = async () => {
+    try {
+      const pontosData = await apiService.listarPontos();
+      setPontos(pontosData.filter(p => p.ativo !== false));
+    } catch (error) {
+      console.error('Erro ao carregar pontos:', error);
+    }
+  };
 
   const formatarMateriais = (materiais) => {
     if (!materiais) return 'Não informado';

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 function EmpresasParceiras() {
@@ -54,9 +54,13 @@ function EmpresasParceiras() {
     carregarEmpresas();
   }, []);
   
-  const carregarEmpresas = () => {
-    const empresasCadastradas = database.listarEmpresas().filter(e => e.ativo !== false);
-    setEmpresas(empresasCadastradas);
+  const carregarEmpresas = async () => {
+    try {
+      const empresasData = await apiService.listarEmpresas();
+      setEmpresas(empresasData.filter(e => e.ativo !== false));
+    } catch (error) {
+      console.error('Erro ao carregar empresas:', error);
+    }
   };
 
   const acessarEmpresa = (empresa) => {
