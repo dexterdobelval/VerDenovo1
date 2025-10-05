@@ -25,6 +25,7 @@ public class DataInitializer implements CommandLineRunner {
             
             usuarioRepository.save(admin);
             System.out.println("Conta admin criada: vitorhugobate@gmail.com");
+            System.out.println("Admin tipo: " + admin.getTipo());
         }
     }
 }
