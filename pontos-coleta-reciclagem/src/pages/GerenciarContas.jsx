@@ -19,6 +19,8 @@ function GerenciarContas() {
       return;
     }
     console.log('Usuário logado, carregando dados');
+    // Scroll para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     carregarDados();
   }, [usuario]);
 
