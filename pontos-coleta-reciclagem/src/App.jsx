@@ -44,7 +44,7 @@ function Layout() {
   return (
     <div className="App">
       <Navbar />
-      <div className="container" style={{marginTop: '88px'}}>
+      <div className="container" style={{marginTop: isAuthPage ? '0' : '88px'}}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/pontos" element={<PontosColeta />} />
