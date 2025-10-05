@@ -13,8 +13,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("https://*.netlify.app");
-        configuration.addAllowedOriginPattern("https://*--*.netlify.app");
+        configuration.addAllowedOrigin("https://wondrous-cocada-120969.netlify.app");
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
         configuration.addAllowedMethod("PUT");
