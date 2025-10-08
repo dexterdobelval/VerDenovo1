@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { apiService } from '../services/api';
+import { database } from '../services/database';
 import { useAuth } from '../contexts/AuthContext';
 
 function CadastroUsuario() {
@@ -127,7 +127,7 @@ function CadastroUsuario() {
     }
 
     try {
-      const novoUsuario = await apiService.cadastrarUsuario({
+      const novoUsuario = database.adicionarUsuario({
         nome: formData.nome,
         email: formData.email,
         senha: formData.senha

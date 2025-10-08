@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { apiService } from '../services/api';
+import { database } from '../services/database';
 import { excluirPontoPorNome } from '../utils/excluirPonto';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -105,9 +105,9 @@ function PontosColeta() {
     };
   }, []);
   
-  const carregarPontos = async () => {
+  const carregarPontos = () => {
     try {
-      const pontosData = await apiService.listarPontos();
+      const pontosData = database.listarPontos();
       setPontos(pontosData.filter(p => p.ativo !== false));
     } catch (error) {
       console.error('Erro ao carregar pontos:', error);

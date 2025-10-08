@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { apiService } from '../services/api';
+import { database } from '../services/database';
 
 function GerenciarContas() {
   const { usuario } = useAuth();
@@ -24,13 +24,11 @@ function GerenciarContas() {
     carregarDados();
   }, [usuario]);
 
-  const carregarDados = async () => {
+  const carregarDados = () => {
     try {
-      const [usuariosData, empresasData, pontosData] = await Promise.all([
-        apiService.listarUsuarios(),
-        apiService.listarEmpresas(),
-        apiService.listarPontos()
-      ]);
+      const usuariosData = database.listarUsuarios();
+      const empresasData = database.listarEmpresas();
+      const pontosData = database.listarPontos();
       
       setUsuarios(usuariosData);
       setEmpresas(empresasData);
@@ -42,17 +40,17 @@ function GerenciarContas() {
     }
   };
 
-  const alterarStatus = async (tipo, id) => {
+  const alterarStatus = (tipo, id) => {
     try {
       if (tipo === 'usuarios') {
         const usuario = usuarios.find(u => u.id === id);
-        await apiService.atualizarUsuario(id, {...usuario, ativo: !usuario.ativo});
+        database.atualizarUsuario(id, {...usuario, ativo: !usuario.ativo});
       } else if (tipo === 'empresas') {
         const empresa = empresas.find(e => e.id === id);
-        await apiService.atualizarEmpresa(id, {...empresa, ativo: !empresa.ativo});
+        database.atualizarEmpresa(id, {...empresa, ativo: !empresa.ativo});
       } else if (tipo === 'pontos') {
         const ponto = pontos.find(p => p.id === id);
-        await apiService.atualizarPonto(id, {...ponto, ativo: !ponto.ativo});
+        database.atualizarPonto(id, {...ponto, ativo: !ponto.ativo});
       }
       carregarDados();
     } catch (error) {
@@ -60,16 +58,16 @@ function GerenciarContas() {
     }
   };
 
-  const excluirConta = async (tipo, id) => {
+  const excluirConta = (tipo, id) => {
     if (!window.confirm('Tem certeza que deseja excluir esta conta?')) return;
     
     try {
       if (tipo === 'usuarios') {
-        await apiService.excluirUsuario(id);
+        database.excluirUsuario(id);
       } else if (tipo === 'empresas') {
-        await apiService.excluirEmpresa(id);
+        database.excluirEmpresa(id);
       } else if (tipo === 'pontos') {
-        await apiService.excluirPonto(id);
+        database.excluirPonto(id);
       }
       carregarDados();
     } catch (error) {

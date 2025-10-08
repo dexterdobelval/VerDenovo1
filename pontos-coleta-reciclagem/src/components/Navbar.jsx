@@ -286,9 +286,6 @@ function Navbar() {
                     <Link className={`nav-link nav-link-custom text-decoration-none ${location.pathname === '/cadastrar' ? 'nav-link-active' : ''}`} to="/cadastrar" onClick={closeOffcanvas}>
                       <i className="bi bi-geo-alt me-3"></i>Ponto de Coleta
                     </Link>
-                    <Link className={`nav-link nav-link-custom text-decoration-none ${location.pathname === '/cadastro-empresa' ? 'nav-link-active' : ''}`} to="/cadastro-empresa" onClick={closeOffcanvas}>
-                      <i className="bi bi-building me-3"></i>Empresa
-                    </Link>
                   </div>
                   <div style={{background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '15px', padding: '1rem', border: '2px solid #3b82f6'}}>
                     <div className="text-center mb-2">
@@ -296,9 +293,6 @@ function Navbar() {
                     </div>
                     <Link className={`nav-link nav-link-custom nav-link-login text-decoration-none ${location.pathname === '/login-usuario' ? 'nav-link-login-active' : ''}`} to="/login-usuario" onClick={closeOffcanvas}>
                       <i className="bi bi-person-circle me-3"></i>Usuário
-                    </Link>
-                    <Link className={`nav-link nav-link-custom nav-link-login text-decoration-none ${location.pathname === '/login-empresa' ? 'nav-link-login-active' : ''}`} to="/login-empresa" onClick={closeOffcanvas}>
-                      <i className="bi bi-building me-3"></i>Empresa
                     </Link>
                     <Link className={`nav-link nav-link-custom nav-link-login text-decoration-none ${location.pathname === '/login-ponto' ? 'nav-link-login-active' : ''}`} to="/login-ponto" onClick={closeOffcanvas}>
                       <i className="bi bi-unlock me-3"></i>Ponto de Coleta

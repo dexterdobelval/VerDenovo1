@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { apiService } from '../services/api';
+import { database } from '../services/database';
 
 function LoginUsuario() {
   const [email, setEmail] = useState('');
@@ -101,7 +101,7 @@ function LoginUsuario() {
         loginAdmin(lembrarMe);
         navigate('/');
       } else if (email && senha) {
-        const usuario = await apiService.loginUsuario(email, senha);
+        const usuario = database.buscarUsuario(email, senha);
         if (usuario) {
           loginUsuario(usuario, lembrarMe);
           navigate('/');

@@ -9,7 +9,7 @@ Sistema desenvolvido em ReactJS com Vite para gerenciar pontos de coleta de mate
 - **React Router Dom** - Roteamento entre páginas
 - **Bootstrap** - Framework CSS para estilização
 - **React Hook Form** - Gerenciamento de formulários
-- **Axios** - Cliente HTTP para requisições à API
+- **LocalStorage** - Armazenamento local de dados
 
 ## Funcionalidades
 
@@ -49,11 +49,10 @@ src/
 └── main.jsx       # Ponto de entrada
 ```
 
-## API Backend
+## Armazenamento de Dados
 
-O projeto está configurado para consumir uma API REST em `http://localhost:3001/api`.
-Endpoints esperados:
-- GET /pontos - Listar pontos
-- POST /pontos - Criar ponto
-- PUT /pontos/:id - Atualizar ponto
-- DELETE /pontos/:id - Deletar ponto
+O projeto utiliza LocalStorage para armazenar dados localmente no navegador:
+- Pontos de coleta
+- Empresas parceiras
+- Usuários cadastrados
+- Dados de autenticação

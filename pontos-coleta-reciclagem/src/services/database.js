@@ -261,8 +261,8 @@ class Database {
     return novoPonto;
   }
 
-  buscarPonto(codigo, senha) {
-    return this.pontos.find(p => p.codigo === codigo && p.senha === senha);
+  buscarPonto(emailOuCodigo, senha) {
+    return this.pontos.find(p => (p.codigo === emailOuCodigo || p.email === emailOuCodigo) && p.senha === senha);
   }
 
   listarPontos() {
