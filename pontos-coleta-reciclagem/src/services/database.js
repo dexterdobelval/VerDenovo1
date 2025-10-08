@@ -15,9 +15,10 @@ class Database {
         nome: 'Administrador VerDenovo',
         email: 'vitorhugobate@gmail.com',
         senha: '123456789Vi',
-        tipo: 'admin',
-        ativo: true,
-        dataCadastro: '2024-01-01'
+        nivelAcesso: 'ADMIN',
+        foto: null,
+        dataCadastro: new Date().toISOString(),
+        statusUsuario: 'ATIVO'
       });
       localStorage.setItem('usuarios', JSON.stringify(this.usuarios));
     }
@@ -30,16 +31,20 @@ class Database {
           nome: 'João Silva',
           email: 'joao.silva@email.com',
           senha: '123456',
-          ativo: true,
-          dataCadastro: '2024-01-15'
+          nivelAcesso: 'USER',
+          foto: null,
+          dataCadastro: new Date().toISOString(),
+          statusUsuario: 'ATIVO'
         },
         {
           id: 1002,
           nome: 'Maria Santos',
           email: 'maria.santos@email.com',
           senha: '123456',
-          ativo: false,
-          dataCadastro: '2024-02-20'
+          nivelAcesso: 'USER',
+          foto: null,
+          dataCadastro: new Date().toISOString(),
+          statusUsuario: 'INATIVO'
         }
       ];
       this.usuarios.push(...usuariosExemplo);
@@ -155,17 +160,17 @@ class Database {
         {
           id: 3001,
           nome: 'EcoVerde Reciclagem',
-          endereco: 'Rua das Flores, 123',
-          cidade: 'São Paulo',
-          cep: '01234-567',
+          cep: '01234567',
+          numero: '123',
+          complemento: 'Sala 1',
           telefone: '(11) 9999-8888',
-          horario: '08:00 às 18:00',
-          materiais: { papel: true, plastico: true, vidro: true, metal: false },
-          codigo: 'ECOVERDE001',
           email: 'contato@ecoverde.com',
-          senha: '123456',
-          ativo: true,
-          dataCadastro: '2024-01-20'
+          horaFuncionamento: '08:00 às 18:00',
+          material: 'Papel, Plástico, Vidro',
+          categoria_id: 1,
+          usuario_id: 999999,
+          dataCadastro: new Date().toISOString(),
+          statusPonto: 'ATIVO'
         },
         {
           id: 3002,
@@ -252,17 +257,41 @@ class Database {
   adicionarPonto(ponto) {
     const novoPonto = {
       id: Date.now(),
-      ...ponto,
-      ativo: true,
-      dataCadastro: new Date().toISOString()
+      nome: ponto.nome,
+      cep: ponto.cep?.replace(/\D/g, ''),
+      numero: ponto.numero || 'S/N',
+      complemento: ponto.complemento || null,
+      telefone: ponto.telefone,
+      email: ponto.email,
+      horaFuncionamento: ponto.horario || ponto.horaFuncionamento,
+      material: this.formatarMateriais(ponto.materiais),
+      categoria_id: 1,
+      usuario_id: 999999,
+      dataCadastro: new Date().toISOString(),
+      statusPonto: 'ATIVO'
     };
     this.pontos.push(novoPonto);
     localStorage.setItem('pontos', JSON.stringify(this.pontos));
     return novoPonto;
   }
 
-  buscarPonto(emailOuCodigo, senha) {
-    return this.pontos.find(p => (p.codigo === emailOuCodigo || p.email === emailOuCodigo) && p.senha === senha);
+  formatarMateriais(materiais) {
+    if (!materiais) return '';
+    const tipos = [];
+    if (materiais.papel) tipos.push('Papel');
+    if (materiais.plastico) tipos.push('Plástico');
+    if (materiais.vidro) tipos.push('Vidro');
+    if (materiais.metal) tipos.push('Metal');
+    return tipos.join(', ');
+  }
+
+  buscarPonto(email, senha) {
+    // Para compatibilidade, buscar por email no sistema de usuários
+    const usuario = this.usuarios.find(u => u.email === email && u.senha === senha && u.statusUsuario === 'ATIVO');
+    if (usuario && usuario.nivelAcesso === 'ADMIN') {
+      return { email, nome: 'Administrador', tipo: 'admin' };
+    }
+    return null;
   }
 
   listarPontos() {
@@ -325,8 +354,10 @@ class Database {
     const novoUsuario = {
       id: Date.now(),
       ...usuario,
-      ativo: true,
-      dataCadastro: new Date().toISOString()
+      nivelAcesso: 'USER',
+      foto: null,
+      dataCadastro: new Date().toISOString(),
+      statusUsuario: 'ATIVO'
     };
     this.usuarios.push(novoUsuario);
     localStorage.setItem('usuarios', JSON.stringify(this.usuarios));
@@ -334,7 +365,7 @@ class Database {
   }
 
   buscarUsuario(email, senha) {
-    return this.usuarios.find(u => u.email === email && u.senha === senha && u.ativo);
+    return this.usuarios.find(u => u.email === email && u.senha === senha && u.statusUsuario === 'ATIVO');
   }
 
   listarUsuarios() {

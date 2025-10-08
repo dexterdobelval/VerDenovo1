@@ -8,10 +8,7 @@ function CadastrarPonto() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState('');
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [credenciais, setCredenciais] = useState({ codigo: '', senha: '' });
   const navigate = useNavigate();
-  const { loginPonto } = useAuth();
   
   const styles = `
     .cadastro-ponto-container {
@@ -97,24 +94,9 @@ function CadastrarPonto() {
     setMensagem('');
     
     try {
-      // Gerar código único para o ponto
-      const codigo = 'ECO' + Math.random().toString(36).substr(2, 6).toUpperCase();
+      database.adicionarPonto(dados);
       
-      // Combinar horários se fornecidos
-      const horario = dados.horarioAbertura && dados.horarioFechamento 
-        ? `${dados.horarioAbertura} às ${dados.horarioFechamento}`
-        : 'Horário não informado';
-      
-      const dadosCompletos = {
-        ...dados,
-        codigo,
-        horario
-      };
-      
-      database.adicionarPonto(dadosCompletos);
-      
-      setCredenciais({ codigo, email: dados.email });
-      setMostrarModal(true);
+      setMensagem('Ponto cadastrado com sucesso!');
       reset();
       setLoading(false);
     } catch (error) {
@@ -150,6 +132,7 @@ function CadastrarPonto() {
                 className={`form-control ${errors.nome ? 'is-invalid' : ''}`}
                 id="nome"
                 placeholder="Nome do ponto"
+                maxLength="50"
                 {...register('nome', { required: 'Nome é obrigatório' })}
               />
               <label htmlFor="nome">
@@ -161,47 +144,45 @@ function CadastrarPonto() {
             <div className="form-floating mb-3">
               <input
                 type="text"
-                className={`form-control ${errors.endereco ? 'is-invalid' : ''}`}
-                id="endereco"
-                placeholder="Endereço completo"
-                {...register('endereco', { required: 'Endereço é obrigatório' })}
+                className={`form-control ${errors.numero ? 'is-invalid' : ''}`}
+                id="numero"
+                placeholder="Número"
+                maxLength="10"
+                {...register('numero', { required: 'Número é obrigatório' })}
               />
-              <label htmlFor="endereco">
-                <i className="bi bi-house me-2"></i>Endereço
+              <label htmlFor="numero">
+                <i className="bi bi-hash me-2"></i>Número
               </label>
-              {errors.endereco && <div className="invalid-feedback">{errors.endereco.message}</div>}
+              {errors.numero && <div className="invalid-feedback">{errors.numero.message}</div>}
             </div>
 
-            <div className="row">
-              <div className="col-md-8">
-                <div className="form-floating mb-3">
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cidade ? 'is-invalid' : ''}`}
-                    id="cidade"
-                    placeholder="Cidade"
-                    {...register('cidade', { required: 'Cidade é obrigatória' })}
-                  />
-                  <label htmlFor="cidade">
-                    <i className="bi bi-building me-2"></i>Cidade
-                  </label>
-                  {errors.cidade && <div className="invalid-feedback">{errors.cidade.message}</div>}
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="form-floating mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="cep"
-                    placeholder="00000-000"
-                    {...register('cep')}
-                  />
-                  <label htmlFor="cep">
-                    <i className="bi bi-mailbox me-2"></i>CEP
-                  </label>
-                </div>
-              </div>
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className="form-control"
+                id="complemento"
+                placeholder="Complemento (opcional)"
+                maxLength="50"
+                {...register('complemento')}
+              />
+              <label htmlFor="complemento">
+                <i className="bi bi-house me-2"></i>Complemento
+              </label>
+            </div>
+
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className={`form-control ${errors.cep ? 'is-invalid' : ''}`}
+                id="cep"
+                placeholder="00000-000"
+                maxLength="9"
+                {...register('cep', { required: 'CEP é obrigatório' })}
+              />
+              <label htmlFor="cep">
+                <i className="bi bi-mailbox me-2"></i>CEP
+              </label>
+              {errors.cep && <div className="invalid-feedback">{errors.cep.message}</div>}
             </div>
 
             <div className="mb-3">
@@ -254,61 +235,33 @@ function CadastrarPonto() {
 
 
 
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <div className="form-floating">
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="horarioAbertura"
-                    {...register('horarioAbertura')}
-                  />
-                  <label htmlFor="horarioAbertura">
-                    <i className="bi bi-clock me-2"></i>Abertura
-                  </label>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="form-floating">
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="horarioFechamento"
-                    {...register('horarioFechamento')}
-                  />
-                  <label htmlFor="horarioFechamento">
-                    <i className="bi bi-clock me-2"></i>Fechamento
-                  </label>
-                </div>
-              </div>
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className={`form-control ${errors.horaFuncionamento ? 'is-invalid' : ''}`}
+                id="horaFuncionamento"
+                placeholder="Ex: 08:00 às 18:00"
+                maxLength="200"
+                {...register('horaFuncionamento', { required: 'Horário de funcionamento é obrigatório' })}
+              />
+              <label htmlFor="horaFuncionamento">
+                <i className="bi bi-clock me-2"></i>Horário de Funcionamento
+              </label>
+              {errors.horaFuncionamento && <div className="invalid-feedback">{errors.horaFuncionamento.message}</div>}
             </div>
 
             <div className="form-floating mb-3">
               <input
                 type="email"
-                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                className="form-control"
                 id="email"
                 placeholder="ponto@email.com"
-                {...register('email', { required: 'Email é obrigatório' })}
+                maxLength="50"
+                {...register('email')}
               />
               <label htmlFor="email">
                 <i className="bi bi-envelope me-2"></i>Email do Ponto
               </label>
-              {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
-            </div>
-
-            <div className="form-floating mb-3">
-              <input
-                type="password"
-                className={`form-control ${errors.senha ? 'is-invalid' : ''}`}
-                id="senha"
-                placeholder="Senha do ponto"
-                {...register('senha', { required: 'Senha é obrigatória' })}
-              />
-              <label htmlFor="senha">
-                <i className="bi bi-lock me-2"></i>Senha
-              </label>
-              {errors.senha && <div className="invalid-feedback">{errors.senha.message}</div>}
             </div>
 
             <div className="form-floating mb-4">
@@ -317,6 +270,7 @@ function CadastrarPonto() {
                 className="form-control"
                 id="telefone"
                 placeholder="(00) 00000-0000"
+                maxLength="20"
                 {...register('telefone')}
               />
               <label htmlFor="telefone">
@@ -343,143 +297,7 @@ function CadastrarPonto() {
         </div>
       </div>
       
-      {/* Modal de Sucesso */}
-      {mostrarModal && (
-        <div className="modal d-block" style={{backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(5px)'}}>
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content" style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '25px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
-              overflow: 'hidden',
-              animation: 'slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)'
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                padding: '2rem',
-                textAlign: 'center',
-                position: 'relative'
-              }}>
-                <div style={{
-                  width: '100px',
-                  height: '100px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem',
-                  animation: 'bounce 2s infinite'
-                }}>
-                  <i className="bi bi-check-circle text-white" style={{fontSize: '3rem'}}></i>
-                </div>
-                <h3 className="text-white mb-2 fw-bold">Ponto Cadastrado!</h3>
-                <p className="text-white-50 mb-0">Suas credenciais de acesso foram geradas</p>
-              </div>
-              
-              <div className="p-4">
-                <div className="text-center mb-4">
-                  <h5 className="text-success mb-3">
-                    <i className="bi bi-key me-2"></i>
-                    Credenciais de Acesso
-                  </h5>
-                  <p className="text-muted">Guarde essas informações para fazer login no sistema</p>
-                </div>
-                
-                <div className="row g-3 mb-4">
-                  <div className="col-12">
-                    <div style={{
-                      background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-                      border: '2px solid #bfdbfe',
-                      borderRadius: '20px',
-                      padding: '1.5rem',
-                      textAlign: 'center',
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => navigator.clipboard.writeText(credenciais.email)}
-                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-5px)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                    >
-                      <div style={{
-                        width: '50px',
-                        height: '50px',
-                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '0 auto 1rem'
-                      }}>
-                        <i className="bi bi-envelope text-white"></i>
-                      </div>
-                      <h6 className="text-primary fw-bold mb-2">Email de Acesso</h6>
-                      <div style={{
-                        fontSize: '1rem',
-                        fontWeight: '600',
-                        color: '#1d4ed8',
-                        wordBreak: 'break-all'
-                      }}>
-                        {credenciais.email}
-                      </div>
-                      <small className="text-muted d-block mt-2">
-                        <i className="bi bi-clipboard me-1"></i>
-                        Clique para copiar
-                      </small>
-                    </div>
-                  </div>
-                </div>
-                
-                <div style={{
-                  background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                  border: '2px solid #fcd34d',
-                  borderRadius: '15px',
-                  padding: '1rem',
-                  textAlign: 'center',
-                  marginBottom: '1.5rem'
-                }}>
-                  <i className="bi bi-info-circle text-amber-600 me-2"></i>
-                  <small className="text-amber-700 fw-medium">
-                    Anote essas informações em local seguro. Você precisará delas para acessar o sistema.
-                  </small>
-                </div>
-                
-                <div className="d-grid">
-                  <button 
-                    type="button" 
-                    className="btn text-white fw-bold py-3"
-                    style={{
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                      border: 'none',
-                      borderRadius: '15px',
-                      fontSize: '1.1rem',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                    onClick={() => {
-                      setMostrarModal(false);
-                      loginPonto({ codigo: credenciais.codigo, email: credenciais.email });
-                      navigate('/');
-                    }}
-                  >
-                    <i className="bi bi-box-arrow-in-right me-2"></i>
-                    Entrar Automaticamente no Sistema
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

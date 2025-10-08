@@ -145,6 +145,7 @@ function LoginUsuario() {
                 className="form-control"
                 id="email"
                 placeholder="seu@email.com"
+                maxLength="100"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -160,6 +161,7 @@ function LoginUsuario() {
                 className="form-control"
                 id="senha"
                 placeholder="Sua senha"
+                maxLength="100"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required

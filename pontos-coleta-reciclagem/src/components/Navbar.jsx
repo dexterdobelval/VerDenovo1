@@ -5,8 +5,8 @@ function Navbar() {
   const { usuario, logout, isLogado } = useAuth();
   const location = useLocation();
   
-  const isLoginPage = ['/login-usuario', '/login-empresa', '/login-ponto'].includes(location.pathname);
-  const isCadastroPage = ['/cadastro-usuario', '/cadastrar', '/cadastro-empresa'].includes(location.pathname);
+  const isLoginPage = ['/login-usuario', '/login-ponto'].includes(location.pathname);
+  const isCadastroPage = ['/cadastro-usuario', '/cadastrar'].includes(location.pathname);
   
   const animationStyles = `
     @keyframes slideInLeft {
@@ -117,9 +117,7 @@ function Navbar() {
               <Link className={`nav-link nav-link-custom text-decoration-none ${location.pathname === '/pontos' ? 'nav-link-active' : ''}`} to="/pontos" onClick={closeOffcanvas}>
                 <i className="bi bi-geo-alt me-3"></i>Pontos de Coleta
               </Link>
-              <Link className={`nav-link nav-link-custom text-decoration-none ${location.pathname === '/empresas-parceiras' ? 'nav-link-active' : ''}`} to="/empresas-parceiras" onClick={closeOffcanvas}>
-                <i className="bi bi-building me-3"></i>Empresas Parceiras
-              </Link>
+
             </div>
             
             {/* Educação */}
@@ -147,8 +145,7 @@ function Navbar() {
                 <div className="position-relative" style={{background: usuario.tipo === 'admin' ? 'linear-gradient(135deg, #fef2f2, #fee2e2)' : 'linear-gradient(135deg, #dcfce7, #bbf7d0)', borderRadius: '15px', padding: '1rem', border: `2px solid ${usuario.tipo === 'admin' ? '#fca5a5' : '#86efac'}`}}>
                   <div className="text-center mb-3">
                     <div className={`badge ${usuario.tipo === 'admin' ? 'bg-danger' : 'bg-success'} px-3 py-2 rounded-pill`} style={{fontSize: '0.75rem', fontWeight: '600'}}>
-                      {usuario.tipo === 'empresa' ? 'EMPRESA LOGADA' : 
-                       usuario.tipo === 'ponto' ? 'PONTO LOGADO' : 
+                      {usuario.tipo === 'ponto' ? 'PONTO LOGADO' : 
                        usuario.tipo === 'usuario' ? 'USUÁRIO LOGADO' : 'ADMINISTRADOR'}
                     </div>
                   </div>
@@ -240,7 +237,7 @@ function Navbar() {
                   ) : (
                     <Link 
                       className="nav-link nav-link-custom text-decoration-none" 
-                      to={usuario.tipo === 'empresa' ? '/personalizar-empresa' : '/personalizar-ponto'} 
+                      to="/personalizar-ponto" 
                       onClick={closeOffcanvas}
                     >
                       <i className="bi bi-gear me-3"></i>Personalizar Informações

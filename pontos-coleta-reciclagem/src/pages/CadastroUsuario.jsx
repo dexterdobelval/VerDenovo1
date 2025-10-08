@@ -194,6 +194,7 @@ function CadastroUsuario() {
                 placeholder="Seu nome completo"
                 value={formData.nome}
                 onChange={handleChange}
+                maxLength="100"
                 required
               />
               <label htmlFor="nome">
@@ -210,6 +211,7 @@ function CadastroUsuario() {
                 placeholder="seu@email.com"
                 value={formData.email}
                 onChange={handleChange}
+                maxLength="100"
                 required
               />
               <label htmlFor="email">
@@ -226,6 +228,7 @@ function CadastroUsuario() {
                 placeholder="Sua senha"
                 value={formData.senha}
                 onChange={handleChange}
+                maxLength="100"
                 required
               />
               <label htmlFor="senha">
@@ -260,6 +263,7 @@ function CadastroUsuario() {
                 placeholder="Confirme sua senha"
                 value={formData.confirmarSenha}
                 onChange={handleChange}
+                maxLength="100"
                 required
               />
               <label htmlFor="confirmarSenha">

@@ -124,15 +124,12 @@ function LoginPonto() {
           <div className="ponto-login-icon">
             <i className="bi bi-geo-alt text-white"></i>
           </div>
-          <h3 className="text-white mb-0 fw-bold">Acesso ao Ponto</h3>
-          <p className="text-white-50 mb-0 mt-2">Entre com o código do ponto</p>
+          <h3 className="text-white mb-0 fw-bold">Acesso ao Sistema</h3>
+          <p className="text-white-50 mb-0 mt-2">Entre com suas credenciais</p>
         </div>
         
         <div className="p-4">
-          <div className="alert alert-info border-0 rounded-3 mb-4">
-            <i className="bi bi-info-circle me-2"></i>
-            Use o email e senha do ponto para acessar
-          </div>
+
           
           <form onSubmit={handleSubmit}>
             <div className="form-floating mb-3">
@@ -142,12 +139,13 @@ function LoginPonto() {
                 id="email"
                 name="email"
                 placeholder="ponto@email.com"
+                maxLength="100"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
               <label htmlFor="email">
-                <i className="bi bi-envelope me-2"></i>Email do Ponto
+                <i className="bi bi-envelope me-2"></i>Email
               </label>
             </div>
             
@@ -157,7 +155,8 @@ function LoginPonto() {
                 className="form-control"
                 id="senha"
                 name="senha"
-                placeholder="Senha do ponto"
+                placeholder="Sua senha"
+                maxLength="100"
                 value={formData.senha}
                 onChange={handleChange}
                 required
@@ -201,8 +200,8 @@ function LoginPonto() {
                   </>
                 ) : (
                   <>
-                    <i className="bi bi-unlock me-2"></i>
-                    Acessar Ponto
+                    <i className="bi bi-box-arrow-in-right me-2"></i>
+                    Entrar
                   </>
                 )}
               </button>
