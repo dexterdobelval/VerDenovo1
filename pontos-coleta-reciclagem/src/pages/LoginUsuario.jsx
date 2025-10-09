@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { database } from '../services/database';
 
 function LoginUsuario() {
   const [email, setEmail] = useState('');
@@ -97,22 +96,17 @@ function LoginUsuario() {
 
     try {
       // Verificar se é admin
-      if (email === 'vitorhugobate@gmail.com' && senha === '123456789Vi') {
+      if (email === 'admin@verdenovo.com' && senha === 'admin123') {
         loginAdmin(lembrarMe);
         navigate('/');
       } else if (email && senha) {
-        const usuario = database.buscarUsuario(email, senha);
-        if (usuario) {
-          loginUsuario(usuario, lembrarMe);
-          navigate('/');
-        } else {
-          setErro('Email ou senha incorretos');
-        }
+        await loginUsuario(email, senha, lembrarMe);
+        navigate('/');
       } else {
         setErro('Email e senha são obrigatórios');
       }
     } catch (error) {
-      setErro('Erro ao fazer login. Verifique suas credenciais.');
+      setErro(error.message || 'Erro ao fazer login. Verifique suas credenciais.');
     } finally {
       setCarregando(false);
     }

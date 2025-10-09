@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 function CadastrarPonto() {
@@ -89,18 +89,40 @@ function CadastrarPonto() {
     .animate-slide-up { animation: slideInUp 0.6s ease-out; }
   `;
 
+  const { usuario } = useAuth();
+
   const onSubmit = async (dados) => {
     setLoading(true);
     setMensagem('');
     
     try {
-      database.adicionarPonto(dados);
+      // Formatar materiais
+      const materiais = [];
+      if (dados.materiais?.papel) materiais.push('Papel');
+      if (dados.materiais?.plastico) materiais.push('Plástico');
+      if (dados.materiais?.vidro) materiais.push('Vidro');
+      if (dados.materiais?.metal) materiais.push('Metal');
+      
+      const pontoData = {
+        nome: dados.nome,
+        cep: dados.cep.replace(/\D/g, ''),
+        numero: dados.numero,
+        complemento: dados.complemento || '',
+        telefone: dados.telefone || '',
+        email: dados.email || '',
+        horaFuncionamento: dados.horaFuncionamento,
+        material: materiais.join(', ') || 'Não especificado',
+        senha: dados.senha
+      };
+      
+      await apiService.criarPonto(pontoData);
       
       setMensagem('Ponto cadastrado com sucesso!');
       reset();
-      setLoading(false);
     } catch (error) {
-      setMensagem('Erro ao cadastrar ponto');
+      console.error('Erro:', error);
+      setMensagem('Erro ao cadastrar ponto: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -264,7 +286,7 @@ function CadastrarPonto() {
               </label>
             </div>
 
-            <div className="form-floating mb-4">
+            <div className="form-floating mb-3">
               <input
                 type="tel"
                 className="form-control"
@@ -276,6 +298,21 @@ function CadastrarPonto() {
               <label htmlFor="telefone">
                 <i className="bi bi-telephone me-2"></i>Telefone
               </label>
+            </div>
+
+            <div className="form-floating mb-4">
+              <input
+                type="password"
+                className={`form-control ${errors.senha ? 'is-invalid' : ''}`}
+                id="senha"
+                placeholder="Senha para login"
+                maxLength="50"
+                {...register('senha', { required: 'Senha é obrigatória' })}
+              />
+              <label htmlFor="senha">
+                <i className="bi bi-lock me-2"></i>Senha do Ponto
+              </label>
+              {errors.senha && <div className="invalid-feedback">{errors.senha.message}</div>}
             </div>
 
             <div className="d-grid">

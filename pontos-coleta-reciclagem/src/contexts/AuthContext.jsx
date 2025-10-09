@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { apiService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -80,13 +81,29 @@ export const AuthProvider = ({ children }) => {
     salvarUsuario(usuario, lembrar);
   };
 
-  const loginUsuario = (dadosUsuario, lembrar = false) => {
-    const usuario = { tipo: 'usuario', dados: dadosUsuario };
-    setUsuario(usuario);
-    salvarUsuario(usuario, lembrar);
+  const loginUsuario = async (email, senha, lembrar = false) => {
+    try {
+      const response = await apiService.login(email, senha);
+      const usuario = { tipo: 'usuario', dados: response.usuario };
+      setUsuario(usuario);
+      salvarUsuario(usuario, lembrar);
+      return response;
+    } catch (error) {
+      throw new Error('Credenciais inválidas');
+    }
+  };
+
+  const cadastrarUsuario = async (dadosUsuario) => {
+    try {
+      await apiService.cadastrar(dadosUsuario);
+      return { success: true };
+    } catch (error) {
+      throw new Error('Erro ao cadastrar usuário');
+    }
   };
 
   const logout = () => {
+    apiService.logout();
     setUsuario(null);
     localStorage.removeItem('usuario_logado');
     sessionStorage.removeItem('usuario_logado');
@@ -108,6 +125,7 @@ export const AuthProvider = ({ children }) => {
       loginPonto,
       loginAdmin,
       loginUsuario,
+      cadastrarUsuario,
       logout,
       isLogado,
       mostrarMensagemLogout

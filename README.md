@@ -4,12 +4,20 @@ Sistema desenvolvido em ReactJS com Vite para gerenciar pontos de coleta de mate
 
 ## Tecnologias Utilizadas
 
+### Frontend
 - **ReactJS** - Biblioteca para construção da interface
 - **Vite** - Build tool e servidor de desenvolvimento
 - **React Router Dom** - Roteamento entre páginas
 - **Bootstrap** - Framework CSS para estilização
 - **React Hook Form** - Gerenciamento de formulários
-- **LocalStorage** - Armazenamento local de dados
+
+### Backend
+- **Spring Boot** - Framework Java para API REST
+- **Spring Security** - Autenticação e autorização
+- **JWT** - Tokens de autenticação
+- **JPA/Hibernate** - ORM para banco de dados
+- **SQL Server** - Banco de dados (Somee Cloud)
+- **BCrypt** - Criptografia de senhas
 
 ## Funcionalidades
 
@@ -21,22 +29,36 @@ Sistema desenvolvido em ReactJS com Vite para gerenciar pontos de coleta de mate
 
 ## Como Executar
 
-1. Entrar na pasta:
+### Backend (Spring Boot)
+1. Entrar na pasta do backend:
+```bash
+cd backend
+```
+
+2. Executar o backend:
+```bash
+.\run.bat
+```
+
+3. Backend estará rodando em: http://localhost:3000
+
+### Frontend (React)
+1. Entrar na pasta do frontend:
 ```bash
 cd pontos-coleta-reciclagem
 ```
-
 
 2. Instalar dependências:
 ```bash
 npm install
 ```
+
 3. Executar em modo desenvolvimento:
 ```bash
 npm run dev
 ```
 
-3. Acessar: http://localhost:5173
+4. Acessar: http://localhost:5173
 
 ## Estrutura do Projeto
 
@@ -49,10 +71,10 @@ src/
 └── main.jsx       # Ponto de entrada
 ```
 
-## Armazenamento de Dados
+## Banco de Dados
 
-O projeto utiliza LocalStorage para armazenar dados localmente no navegador:
-- Pontos de coleta
-- Empresas parceiras
-- Usuários cadastrados
-- Dados de autenticação
+O projeto utiliza SQL Server hospedado na Somee Cloud:
+- **Servidor**: VerdNovo.mssql.somee.com
+- **Banco**: VerdNovo
+- **Tabelas**: Usuario, Categoria, Ponto
+- **Autenticação**: JWT com BCrypt

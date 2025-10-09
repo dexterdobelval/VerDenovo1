@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 
 function GerenciarContas() {
   const { usuario } = useAuth();
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
-  const [empresas, setEmpresas] = useState([]);
   const [pontos, setPontos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,15 +23,22 @@ function GerenciarContas() {
     carregarDados();
   }, [usuario]);
 
-  const carregarDados = () => {
+  const carregarDados = async () => {
     try {
-      const usuariosData = database.listarUsuarios();
-      const empresasData = database.listarEmpresas();
-      const pontosData = database.listarPontos();
-      
-      setUsuarios(usuariosData);
-      setEmpresas(empresasData);
+      const pontosData = await apiService.listarPontos();
       setPontos(pontosData);
+      
+      // Buscar usuários reais do banco
+      const usuariosData = await apiService.listarUsuarios();
+      const usuariosFormatados = usuariosData.map(user => ({
+        id: user.id,
+        nome: user.nome,
+        email: user.email,
+        ativo: user.statusUsuario === 'ATIVO',
+        nivelAcesso: user.nivelAcesso,
+        statusUsuario: user.statusUsuario
+      }));
+      setUsuarios(usuariosFormatados);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
@@ -40,17 +46,10 @@ function GerenciarContas() {
     }
   };
 
-  const alterarStatus = (tipo, id) => {
+  const alterarStatus = async (tipo, id) => {
     try {
-      if (tipo === 'usuarios') {
-        const usuario = usuarios.find(u => u.id === id);
-        database.atualizarUsuario(id, {...usuario, ativo: !usuario.ativo});
-      } else if (tipo === 'empresas') {
-        const empresa = empresas.find(e => e.id === id);
-        database.atualizarEmpresa(id, {...empresa, ativo: !empresa.ativo});
-      } else if (tipo === 'pontos') {
-        const ponto = pontos.find(p => p.id === id);
-        database.atualizarPonto(id, {...ponto, ativo: !ponto.ativo});
+      if (tipo === 'pontos') {
+        console.log('Alterando status do ponto:', id);
       }
       carregarDados();
     } catch (error) {
@@ -58,20 +57,19 @@ function GerenciarContas() {
     }
   };
 
-  const excluirConta = (tipo, id) => {
+  const excluirConta = async (tipo, id) => {
     if (!window.confirm('Tem certeza que deseja excluir esta conta?')) return;
     
     try {
-      if (tipo === 'usuarios') {
-        database.excluirUsuario(id);
-      } else if (tipo === 'empresas') {
-        database.excluirEmpresa(id);
-      } else if (tipo === 'pontos') {
-        database.excluirPonto(id);
+      if (tipo === 'pontos') {
+        await apiService.deletarPonto(id);
+      } else if (tipo === 'usuarios') {
+        await apiService.deletarUsuario(id);
       }
       carregarDados();
     } catch (error) {
       console.error('Erro ao excluir conta:', error);
+      alert('Erro ao excluir: ' + error.message);
     }
   };
 
@@ -85,54 +83,110 @@ function GerenciarContas() {
     );
   }
 
+  const animationStyles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .animate-fadeInUp { animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-slideInLeft { animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-slideInRight { animation: slideInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-scaleIn { animation: scaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+    .animate-delay-1 { animation-delay: 0.1s; animation-fill-mode: both; }
+    .animate-delay-2 { animation-delay: 0.2s; animation-fill-mode: both; }
+    .animate-delay-3 { animation-delay: 0.3s; animation-fill-mode: both; }
+    .hover-lift { 
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+    }
+    .hover-lift:hover { 
+      transform: translateY(-8px) scale(1.02); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+    }
+    .section-card { 
+      background: rgba(255,255,255,0.95); 
+      backdrop-filter: blur(10px);
+      border-radius: 25px; 
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
+      border: 1px solid rgba(255,255,255,0.2); 
+    }
+    .interactive-card {
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+    }
+    .interactive-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+  `;
+
   return (
-    <div style={{background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', minHeight: '100vh', padding: '2rem 0'}}>
-      <div className="container">
-        {/* Header */}
-        <div className="text-center mb-5">
-          <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style={{width: '80px', height: '80px', background: 'linear-gradient(135deg, #dc2626, #b91c1c)', boxShadow: '0 10px 30px rgba(220, 38, 38, 0.3)'}}>
-            <i className="bi bi-shield-lock text-white" style={{fontSize: '2.5rem'}}></i>
-          </div>
-          <h1 className="display-4 fw-bold text-danger mb-2">Painel Administrativo</h1>
-          <p className="text-muted fs-5">Controle total sobre usuários, empresas e pontos de coleta</p>
+    <div>
+      <style>{animationStyles}</style>
+      {/* Header Simples */}
+      <div className="text-center mb-5" style={{marginTop: '100px'}}>
+        <div className="d-inline-flex align-items-center justify-content-center mb-3 animate-pulse" style={{width: '80px', height: '80px', background: 'linear-gradient(135deg, #dc2626, #b91c1c)', borderRadius: '50%', boxShadow: '0 15px 40px rgba(220, 38, 38, 0.3)'}}>
+          <i className="bi bi-shield-lock text-white" style={{fontSize: '2.2rem'}}></i>
         </div>
+        <h1 className="fw-bold mb-0 animate-fadeInUp" style={{color: '#1e293b', fontSize: '2.5rem', letterSpacing: '-0.02em'}}>
+          <span style={{color: '#dc2626'}}>Área</span> Administrativa
+        </h1>
+      </div>
+
+      <div className="container">
         
         {/* Estatísticas */}
         <div className="row mb-5 g-4">
-          <div className="col-md-4">
-            <div className="card border-0 shadow-lg h-100" style={{borderRadius: '20px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', transform: 'translateY(0)', transition: 'all 0.3s ease'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div className="card-body text-center text-white p-4">
-                <div className="mb-3">
-                  <i className="bi bi-people" style={{fontSize: '3rem', opacity: 0.9}}></i>
+          <div className="col-md-6 animate-slideInLeft animate-delay-1">
+            <div className="card border-0 section-card h-100 interactive-card" style={{background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', border: '1px solid rgba(59, 130, 246, 0.2)'}}>
+              <div className="card-body text-center p-5">
+                <div className="position-relative mb-4">
+                  <div className="d-inline-flex align-items-center justify-content-center animate-pulse" style={{width: '100px', height: '100px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', borderRadius: '50%', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)'}}>
+                    <i className="bi bi-people text-white" style={{fontSize: '3rem'}}></i>
+                  </div>
                 </div>
-                <h2 className="fw-bold mb-2">{usuarios.length}</h2>
-                <p className="mb-0 fs-5">Usuários Cadastrados</p>
-                <small className="opacity-75">Contas de usuários no sistema</small>
+                <h1 className="fw-bold mb-3" style={{color: '#1d4ed8', fontSize: '3rem'}}>{usuarios.length}</h1>
+                <h4 className="mb-2" style={{color: '#1e293b'}}>Usuários Cadastrados</h4>
+                <p className="text-muted fs-5">Contas ativas no sistema</p>
               </div>
+              <div className="position-absolute bottom-0 start-0 w-100" style={{height: '5px', background: 'linear-gradient(90deg, #3b82f6, #1d4ed8)'}}></div>
             </div>
           </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-lg h-100" style={{borderRadius: '20px', background: 'linear-gradient(135deg, #6b7280, #374151)', transform: 'translateY(0)', transition: 'all 0.3s ease'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div className="card-body text-center text-white p-4">
-                <div className="mb-3">
-                  <i className="bi bi-building" style={{fontSize: '3rem', opacity: 0.9}}></i>
+          <div className="col-md-6 animate-slideInRight animate-delay-2">
+            <div className="card border-0 section-card h-100 interactive-card" style={{background: 'linear-gradient(135deg, #dcfce7, #bbf7d0)', border: '1px solid rgba(16, 185, 129, 0.2)'}}>
+              <div className="card-body text-center p-5">
+                <div className="position-relative mb-4">
+                  <div className="d-inline-flex align-items-center justify-content-center animate-pulse" style={{width: '100px', height: '100px', background: 'linear-gradient(135deg, #10b981, #047857)', borderRadius: '50%', boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)'}}>
+                    <i className="bi bi-geo-alt text-white" style={{fontSize: '3rem'}}></i>
+                  </div>
                 </div>
-                <h2 className="fw-bold mb-2">{empresas.length}</h2>
-                <p className="mb-0 fs-5">Empresas Parceiras</p>
-                <small className="opacity-75">Organizações cadastradas</small>
+                <h1 className="fw-bold mb-3" style={{color: '#047857', fontSize: '3rem'}}>{pontos.length}</h1>
+                <h4 className="mb-2" style={{color: '#1e293b'}}>Pontos de Coleta</h4>
+                <p className="text-muted fs-5">Locais de reciclagem ativos</p>
               </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-lg h-100" style={{borderRadius: '20px', background: 'linear-gradient(135deg, #10b981, #047857)', transform: 'translateY(0)', transition: 'all 0.3s ease'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div className="card-body text-center text-white p-4">
-                <div className="mb-3">
-                  <i className="bi bi-geo-alt" style={{fontSize: '3rem', opacity: 0.9}}></i>
-                </div>
-                <h2 className="fw-bold mb-2">{pontos.length}</h2>
-                <p className="mb-0 fs-5">Pontos de Coleta</p>
-                <small className="opacity-75">Locais de reciclagem</small>
-              </div>
+              <div className="position-absolute bottom-0 start-0 w-100" style={{height: '5px', background: 'linear-gradient(90deg, #10b981, #047857)'}}></div>
             </div>
           </div>
         </div>
@@ -151,13 +205,13 @@ function GerenciarContas() {
               <div key={usuario.id} className="p-4 mb-3 rounded-4 position-relative" style={{background: index % 2 === 0 ? 'rgba(59, 130, 246, 0.05)' : 'rgba(248, 250, 252, 0.8)', border: '1px solid rgba(59, 130, 246, 0.1)', transition: 'all 0.3s ease'}} onMouseEnter={(e) => {e.currentTarget.style.transform = 'translateX(8px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.15)';}} onMouseLeave={(e) => {e.currentTarget.style.transform = 'translateX(0)'; e.currentTarget.style.boxShadow = 'none';}}>
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="d-flex align-items-center">
-                    <div className="rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '50px', height: '50px', background: usuario.email === 'vitorhugobate@gmail.com' ? 'linear-gradient(135deg, #dc2626, #b91c1c)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'}}>
-                      <i className={`bi ${usuario.email === 'vitorhugobate@gmail.com' ? 'bi-shield-lock' : 'bi-person'} text-white`} style={{fontSize: '1.3rem'}}></i>
+                    <div className="rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '50px', height: '50px', background: usuario.nivelAcesso === 'ADMIN' ? 'linear-gradient(135deg, #dc2626, #b91c1c)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'}}>
+                      <i className={`bi ${usuario.nivelAcesso === 'ADMIN' ? 'bi-shield-lock' : 'bi-person'} text-white`} style={{fontSize: '1.3rem'}}></i>
                     </div>
                     <div>
                       <h6 className="mb-1 fw-bold text-dark">
                         {usuario.nome}
-                        {usuario.email === 'vitorhugobate@gmail.com' && <span className="badge bg-danger ms-2 px-2 py-1" style={{fontSize: '0.7rem'}}>ADMIN</span>}
+                        {usuario.nivelAcesso === 'ADMIN' && <span className="badge bg-danger ms-2 px-2 py-1" style={{fontSize: '0.7rem'}}>ADMIN</span>}
                       </h6>
                       <small className="text-muted">{usuario.email}</small>
                     </div>
@@ -166,7 +220,7 @@ function GerenciarContas() {
                     <span className={`badge px-3 py-2 rounded-pill ${usuario.ativo ? 'bg-success' : 'bg-danger'}`} style={{fontSize: '0.8rem'}}>
                       {usuario.ativo ? '✅ Ativo' : '❌ Inativo'}
                     </span>
-                    {usuario.email !== 'vitorhugobate@gmail.com' && (
+                    {usuario.nivelAcesso !== 'ADMIN' && (
                       <>
                         <button 
                           className={`btn btn-sm px-3 py-2 fw-bold ${usuario.ativo ? 'btn-warning' : 'btn-success'}`}
@@ -185,7 +239,7 @@ function GerenciarContas() {
                         </button>
                       </>
                     )}
-                    {usuario.email === 'vitorhugobate@gmail.com' && (
+                    {usuario.nivelAcesso === 'ADMIN' && (
                       <div className="text-muted fst-italic d-flex align-items-center">
                         <i className="bi bi-shield-lock me-2"></i>
                         <span>Conta Protegida</span>
@@ -195,55 +249,6 @@ function GerenciarContas() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Lista de Empresas */}
-        <div className="card border-0 shadow-lg mb-5" style={{borderRadius: '25px', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(20px)'}}>
-          <div className="card-header border-0 position-relative overflow-hidden" style={{background: 'linear-gradient(135deg, #6b7280, #374151)', borderRadius: '25px 25px 0 0', padding: '2rem'}}>
-            <div className="position-absolute" style={{top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%'}}></div>
-            <h4 className="text-white mb-0 fw-bold position-relative">
-              <i className="bi bi-building me-3" style={{fontSize: '1.8rem'}}></i>
-              Empresas Parceiras ({empresas.length})
-            </h4>
-          </div>
-          <div className="card-body p-4">
-            {empresas.length === 0 ? (
-              <div className="text-center py-5">
-                <div className="mb-3">
-                  <i className="bi bi-building" style={{fontSize: '4rem', color: '#9ca3af'}}></i>
-                </div>
-                <h5 className="text-muted">Nenhuma empresa cadastrada</h5>
-                <p className="text-muted">As empresas parceiras aparecerão aqui quando se cadastrarem</p>
-              </div>
-            ) : (
-              empresas.map((empresa, index) => (
-                <div key={empresa.id} className="p-4 mb-3 rounded-4" style={{background: index % 2 === 0 ? 'rgba(107, 114, 128, 0.05)' : 'rgba(248, 250, 252, 0.8)', border: '1px solid rgba(107, 114, 128, 0.1)', transition: 'all 0.3s ease'}}>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <div className="rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '50px', height: '50px', background: 'linear-gradient(135deg, #6b7280, #374151)', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'}}>
-                        <i className="bi bi-building text-white" style={{fontSize: '1.3rem'}}></i>
-                      </div>
-                      <div>
-                        <h6 className="mb-1 fw-bold text-dark">{empresa.nome}</h6>
-                        <small className="text-muted">{empresa.email}</small>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-3">
-                      <span className={`badge px-3 py-2 rounded-pill ${empresa.ativo ? 'bg-success' : 'bg-danger'}`}>
-                        {empresa.ativo ? '✅ Ativo' : '❌ Inativo'}
-                      </span>
-                      <button className={`btn btn-sm px-3 py-2 fw-bold ${empresa.ativo ? 'btn-warning' : 'btn-success'}`} onClick={() => alterarStatus('empresas', empresa.id)} style={{borderRadius: '12px'}}>
-                        {empresa.ativo ? 'Desativar' : 'Ativar'}
-                      </button>
-                      <button className="btn btn-sm btn-danger px-3 py-2 fw-bold" onClick={() => excluirConta('empresas', empresa.id)} style={{borderRadius: '12px'}}>
-                        <i className="bi bi-trash me-1"></i>Excluir
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
           </div>
         </div>
 
@@ -275,16 +280,16 @@ function GerenciarContas() {
                       </div>
                       <div>
                         <h6 className="mb-1 fw-bold text-dark">{ponto.nome}</h6>
-                        <small className="text-muted">{ponto.endereco}</small>
+                        <small className="text-muted">CEP: {ponto.cep} - {ponto.material}</small>
+                        <div className="mt-1">
+                          <small className="text-success fw-bold">{ponto.horaFuncionamento}</small>
+                        </div>
                       </div>
                     </div>
                     <div className="d-flex align-items-center gap-3">
-                      <span className={`badge px-3 py-2 rounded-pill ${ponto.ativo ? 'bg-success' : 'bg-danger'}`}>
-                        {ponto.ativo ? '✅ Ativo' : '❌ Inativo'}
+                      <span className="badge px-3 py-2 rounded-pill bg-success">
+                        ✅ Ativo
                       </span>
-                      <button className={`btn btn-sm px-3 py-2 fw-bold ${ponto.ativo ? 'btn-warning' : 'btn-success'}`} onClick={() => alterarStatus('pontos', ponto.id)} style={{borderRadius: '12px'}}>
-                        {ponto.ativo ? 'Desativar' : 'Ativar'}
-                      </button>
                       <button className="btn btn-sm btn-danger px-3 py-2 fw-bold" onClick={() => excluirConta('pontos', ponto.id)} style={{borderRadius: '12px'}}>
                         <i className="bi bi-trash me-1"></i>Excluir
                       </button>

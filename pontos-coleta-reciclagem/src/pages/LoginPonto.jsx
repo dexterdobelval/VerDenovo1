@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 
 function LoginPonto() {
   const navigate = useNavigate();
-  const { loginPonto } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     senha: ''
@@ -103,14 +101,10 @@ function LoginPonto() {
     setCarregando(true);
     
     try {
-      const ponto = database.buscarPonto(formData.email, formData.senha);
-      
-      if (ponto) {
-        loginPonto(ponto, lembrarMe);
-        navigate('/personalizar-ponto');
-      } else {
-        alert('Email ou senha incorretos!');
-      }
+      await apiService.loginPonto(formData.email, formData.senha);
+      navigate('/personalizar-ponto');
+    } catch (error) {
+      alert('Email ou senha incorretos!');
     } finally {
       setCarregando(false);
     }
@@ -129,8 +123,6 @@ function LoginPonto() {
         </div>
         
         <div className="p-4">
-
-          
           <form onSubmit={handleSubmit}>
             <div className="form-floating mb-3">
               <input

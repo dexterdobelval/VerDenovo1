@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { database } from '../services/database';
 import { useAuth } from '../contexts/AuthContext';
 
 function CadastroUsuario() {
@@ -16,7 +15,7 @@ function CadastroUsuario() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const navigate = useNavigate();
-  const { loginUsuario } = useAuth();
+  const { loginUsuario, cadastrarUsuario } = useAuth();
 
   const styles = `
     .cadastro-container {
@@ -127,20 +126,19 @@ function CadastroUsuario() {
     }
 
     try {
-      const novoUsuario = database.adicionarUsuario({
+      await cadastrarUsuario({
         nome: formData.nome,
         email: formData.email,
         senha: formData.senha
       });
       
-      setSucesso('Cadastro realizado com sucesso! Fazendo login...');
+      setSucesso('Cadastro realizado com sucesso! Você pode fazer login agora.');
       
       setTimeout(() => {
-        loginUsuario({ email: formData.email, nome: formData.nome });
-        navigate('/');
-      }, 1500);
+        navigate('/login-usuario');
+      }, 2000);
     } catch (error) {
-      setErro('Erro ao realizar cadastro. Tente novamente.');
+      setErro(error.message || 'Erro ao realizar cadastro. Tente novamente.');
     } finally {
       setCarregando(false);
     }

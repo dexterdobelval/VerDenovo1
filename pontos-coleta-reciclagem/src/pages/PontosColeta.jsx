@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { database } from '../services/database';
-import { excluirPontoPorNome } from '../utils/excluirPonto';
+import { apiService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 function PontosColeta() {
@@ -89,39 +88,28 @@ function PontosColeta() {
   `;
   
   useEffect(() => {
-    // Garantir que o body não tenha overflow hidden
     document.body.style.overflow = 'auto';
     window.scrollTo(0, 0);
     
-    // Excluir ponto chamado "ponto" se existir
-    excluirPontoPorNome('ponto');
-    
     carregarPontos();
     
-    // Cleanup
     return () => {
       document.body.style.overflow = 'auto';
       document.body.classList.remove('modal-open');
     };
   }, []);
   
-  const carregarPontos = () => {
+  const carregarPontos = async () => {
     try {
-      const pontosData = database.listarPontos();
-      setPontos(pontosData.filter(p => p.ativo !== false));
+      const pontosData = await apiService.listarPontos();
+      setPontos(pontosData);
     } catch (error) {
       console.error('Erro ao carregar pontos:', error);
     }
   };
 
-  const formatarMateriais = (materiais) => {
-    if (!materiais) return 'Não informado';
-    const tipos = [];
-    if (materiais.papel) tipos.push('Papel');
-    if (materiais.plastico) tipos.push('Plástico');
-    if (materiais.vidro) tipos.push('Vidro');
-    if (materiais.metal) tipos.push('Metal');
-    return tipos.length > 0 ? tipos.join(', ') : 'Não informado';
+  const formatarMateriais = (material) => {
+    return material || 'Não informado';
   };
 
 
@@ -207,7 +195,7 @@ function PontosColeta() {
                     {ponto.nome}
                   </h5>
                   <p className="text-muted mb-0" style={{fontSize: '0.9rem'}}>
-                    <i className="bi bi-geo me-1"></i>{ponto.cidade}
+                    <i className="bi bi-geo me-1"></i>CEP: {ponto.cep}
                   </p>
                 </div>
                 
@@ -216,13 +204,13 @@ function PontosColeta() {
                     <div className="col-12">
                       <div className="d-flex align-items-center p-2 rounded" style={{background: 'rgba(16, 185, 129, 0.05)'}}>
                         <i className="bi bi-house text-success me-2"></i>
-                        <small className="text-dark fw-medium">{ponto.endereco}</small>
+                        <small className="text-dark fw-medium">CEP: {ponto.cep}, Nº {ponto.numero}</small>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="d-flex align-items-center p-2 rounded" style={{background: 'rgba(59, 130, 246, 0.05)'}}>
                         <i className="bi bi-clock text-primary me-2"></i>
-                        <small className="text-dark">{ponto.horario}</small>
+                        <small className="text-dark">{ponto.horaFuncionamento}</small>
                       </div>
                     </div>
                     <div className="col-6">
@@ -239,7 +227,7 @@ function PontosColeta() {
                     <i className="bi bi-recycle me-2" style={{fontSize: '1.3rem'}}></i>Materiais Aceitos
                   </h6>
                   <div className="d-flex flex-wrap gap-2">
-                    {formatarMateriais(ponto.materiais).split(', ').map((material, index) => {
+                    {formatarMateriais(ponto.material).split(', ').map((material, index) => {
                       const materialConfig = {
                         'Papel': { icon: 'bi-file-earmark-text-fill', color: '#3b82f6', bgClass: 'bg-primary' },
                         'Plástico': { icon: 'bi-cup-fill', color: '#ef4444', bgClass: 'bg-danger' },
@@ -309,7 +297,7 @@ function PontosColeta() {
                   <div>
                     <h4 className="modal-title text-white mb-1 fw-bold">{pontoSelecionado.nome}</h4>
                     <p className="text-white-50 mb-0">
-                      📍 {pontoSelecionado.cidade}
+                      📍 CEP: {pontoSelecionado.cep}
                     </p>
                   </div>
                 </div>
@@ -335,7 +323,7 @@ function PontosColeta() {
                           <i className="bi bi-clock-fill text-white" style={{fontSize: '1.8rem'}}></i>
                         </div>
                         <h6 className="text-primary fw-bold mb-1">Horário</h6>
-                        <small className="text-primary">{pontoSelecionado.horario}</small>
+                        <small className="text-primary">{pontoSelecionado.horaFuncionamento}</small>
                       </div>
                     </div>
                     <div className="col-md-3" style={{animation: 'slideInUp 0.6s ease-out 0.3s both'}}>
@@ -353,7 +341,7 @@ function PontosColeta() {
                           <i className="bi bi-arrow-repeat text-white" style={{fontSize: '1.8rem'}}></i>
                         </div>
                         <h6 className="fw-bold mb-1" style={{color: '#f59e0b'}}>Materiais</h6>
-                        <small style={{color: '#f59e0b'}}>{formatarMateriais(pontoSelecionado.materiais).split(', ').length} tipos</small>
+                        <small style={{color: '#f59e0b'}}>{formatarMateriais(pontoSelecionado.material).split(', ').length} tipos</small>
                       </div>
                     </div>
                   </div>
@@ -378,7 +366,7 @@ function PontosColeta() {
                             </div>
                             <div>
                               <h6 className="fw-bold mb-1 text-dark">Endereço Completo</h6>
-                              <p className="text-muted mb-0">{pontoSelecionado.endereco}</p>
+                              <p className="text-muted mb-0">CEP: {pontoSelecionado.cep}, Nº {pontoSelecionado.numero}</p>
                             </div>
                           </div>
                           
@@ -387,8 +375,8 @@ function PontosColeta() {
                               <i className="bi bi-geo-alt text-white" style={{fontSize: '1.1rem'}}></i>
                             </div>
                             <div>
-                              <h6 className="fw-bold mb-1 text-dark">Cidade</h6>
-                              <p className="text-muted mb-0">{pontoSelecionado.cidade}</p>
+                              <h6 className="fw-bold mb-1 text-dark">Complemento</h6>
+                              <p className="text-muted mb-0">{pontoSelecionado.complemento || 'Não informado'}</p>
                             </div>
                           </div>
                           
@@ -416,7 +404,7 @@ function PontosColeta() {
                         </h5>
                         
                         <div className="row g-3">
-                          {formatarMateriais(pontoSelecionado.materiais).split(', ').map((material, index) => {
+                          {formatarMateriais(pontoSelecionado.material).split(', ').map((material, index) => {
                             const materialConfig = {
                               'Papel': { icon: 'bi-file-earmark-text-fill', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
                               'Plástico': { icon: 'bi-cup-fill', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
