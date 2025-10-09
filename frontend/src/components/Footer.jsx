@@ -28,7 +28,6 @@ function Footer() {
               <ul className="list-unstyled">
                 <li className="mb-2"><Link to="/" className="text-light text-decoration-none hover-link">Início</Link></li>
                 <li className="mb-2"><Link to="/pontos" className="text-light text-decoration-none hover-link">Pontos de Coleta</Link></li>
-                <li className="mb-2"><Link to="/empresas-parceiras" className="text-light text-decoration-none hover-link">Empresas Parceiras</Link></li>
                 <li className="mb-2"><Link to="/sobre" className="text-light text-decoration-none hover-link">Sobre Nós</Link></li>
               </ul>
             </div>

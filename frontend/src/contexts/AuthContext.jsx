@@ -63,12 +63,6 @@ export const AuthProvider = ({ children }) => {
     };
   }, [usuario]);
 
-  const loginEmpresa = (dadosEmpresa, lembrar = false) => {
-    const usuario = { tipo: 'empresa', dados: dadosEmpresa };
-    setUsuario(usuario);
-    salvarUsuario(usuario, lembrar);
-  };
-
   const loginPonto = (dadosPonto, lembrar = false) => {
     const usuario = { tipo: 'ponto', dados: dadosPonto };
     setUsuario(usuario);
@@ -121,7 +115,6 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       usuario,
-      loginEmpresa,
       loginPonto,
       loginAdmin,
       loginUsuario,
