@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 function LoginPonto() {
   const navigate = useNavigate();
+  const { loginPonto } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     senha: ''
@@ -19,7 +21,7 @@ function LoginPonto() {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 100px 20px 20px 20px;
     }
     .login-ponto-card {
       background: rgba(255, 255, 255, 0.95);
@@ -101,7 +103,9 @@ function LoginPonto() {
     setCarregando(true);
     
     try {
-      await apiService.loginPonto(formData.email, formData.senha);
+      const response = await apiService.loginPonto(formData.email, formData.senha);
+      // Usar o AuthContext para fazer login
+      loginPonto(response.ponto, lembrarMe);
       navigate('/personalizar-ponto');
     } catch (error) {
       alert('Email ou senha incorretos!');
@@ -207,13 +211,7 @@ function LoginPonto() {
             </Link>
           </div>
           
-          <div className="text-center">
-            <p className="text-muted mb-2">É uma empresa?</p>
-            <Link to="/login-empresa" className="btn btn-outline-success rounded-3 px-4">
-              <i className="bi bi-building me-2"></i>
-              Login Empresa
-            </Link>
-          </div>
+
         </div>
       </div>
     </div>

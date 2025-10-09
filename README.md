@@ -45,7 +45,7 @@ cd backend
 ### Frontend (React)
 1. Entrar na pasta do frontend:
 ```bash
-cd pontos-coleta-reciclagem
+cd frontend
 ```
 
 2. Instalar dependências:

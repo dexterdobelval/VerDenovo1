@@ -75,15 +75,7 @@ function Footer() {
             <div className="col-md-6">
               <p className="mb-0 text-light">&copy; 2024 VerDenovo Soluções Ambientais Ltda. Todos os direitos reservados.</p>
             </div>
-            <div className="col-md-6 text-md-end">
-              <div className="d-flex justify-content-md-end gap-3 mt-2 mt-md-0">
-                <a href="#" className="text-light text-decoration-none hover-link small">Política de Privacidade</a>
-                <span className="text-muted">|</span>
-                <a href="#" className="text-light text-decoration-none hover-link small">Termos de Uso</a>
-                <span className="text-muted">|</span>
-                <a href="#" className="text-light text-decoration-none hover-link small">Cookies</a>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

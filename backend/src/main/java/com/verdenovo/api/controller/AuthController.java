@@ -48,6 +48,16 @@ public class AuthController {
         }
     }
     
+    @PutMapping("/usuarios/{id}/status")
+    public ResponseEntity<MessageResponse> alterarStatusUsuario(@PathVariable Long id) {
+        try {
+            authService.alterarStatusUsuario(id);
+            return ResponseEntity.ok(new MessageResponse("Status do usuário alterado com sucesso"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+    
     @DeleteMapping("/usuarios/{id}")
     public ResponseEntity<MessageResponse> deletarUsuario(@PathVariable Long id) {
         try {

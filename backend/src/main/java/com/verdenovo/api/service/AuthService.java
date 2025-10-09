@@ -63,6 +63,19 @@ public class AuthService {
         return usuarioRepository.findAll();
     }
     
+    public void alterarStatusUsuario(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        
+        if ("ADMIN".equals(usuario.getNivelAcesso())) {
+            throw new RuntimeException("Não é possível alterar status de administradores");
+        }
+        
+        String novoStatus = "ATIVO".equals(usuario.getStatusUsuario()) ? "INATIVO" : "ATIVO";
+        usuario.setStatusUsuario(novoStatus);
+        usuarioRepository.save(usuario);
+    }
+    
     public void deletarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

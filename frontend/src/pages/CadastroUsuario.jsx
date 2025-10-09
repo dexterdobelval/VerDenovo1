@@ -24,7 +24,7 @@ function CadastroUsuario() {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 100px 20px 20px 20px;
     }
     .cadastro-card {
       background: rgba(255, 255, 255, 0.95);

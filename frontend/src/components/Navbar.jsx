@@ -142,14 +142,14 @@ function Navbar() {
                 <i className="bi bi-person-circle me-2" style={{color: '#059669'}}></i>Conta
               </h6>
               {isLogado() ? (
-                <div className="position-relative" style={{background: usuario.tipo === 'admin' ? 'linear-gradient(135deg, #fef2f2, #fee2e2)' : 'linear-gradient(135deg, #dcfce7, #bbf7d0)', borderRadius: '15px', padding: '1rem', border: `2px solid ${usuario.tipo === 'admin' ? '#fca5a5' : '#86efac'}`}}>
+                <div className="position-relative" style={{background: usuario.dados?.nivelAcesso === 'ADMIN' ? 'linear-gradient(135deg, #fef2f2, #fee2e2)' : 'linear-gradient(135deg, #dcfce7, #bbf7d0)', borderRadius: '15px', padding: '1rem', border: `2px solid ${usuario.dados?.nivelAcesso === 'ADMIN' ? '#fca5a5' : '#86efac'}`}}>
                   <div className="text-center mb-3">
-                    <div className={`badge ${usuario.tipo === 'admin' ? 'bg-danger' : 'bg-success'} px-3 py-2 rounded-pill`} style={{fontSize: '0.75rem', fontWeight: '600'}}>
+                    <div className={`badge ${usuario.dados?.nivelAcesso === 'ADMIN' ? 'bg-danger' : 'bg-success'} px-3 py-2 rounded-pill`} style={{fontSize: '0.75rem', fontWeight: '600'}}>
                       {usuario.tipo === 'ponto' ? 'PONTO LOGADO' : 
-                       usuario.tipo === 'usuario' ? 'USUÁRIO LOGADO' : 'ADMINISTRADOR'}
+                       usuario.dados?.nivelAcesso === 'ADMIN' ? 'ADMINISTRADOR' : 'USUÁRIO LOGADO'}
                     </div>
                   </div>
-                  {usuario.tipo === 'admin' ? (
+                  {usuario.dados?.nivelAcesso === 'ADMIN' ? (
                     <>
                       <Link 
                         className={`nav-link text-decoration-none ${
@@ -230,11 +230,7 @@ function Navbar() {
                         <i className="bi bi-people me-3"></i>Gerenciar Contas
                       </Link>
                     </>
-                  ) : usuario.tipo === 'usuario' ? (
-                    <div className="text-center py-2">
-                      <small className="text-muted">Bem-vindo, {usuario.dados?.nome?.split(' ')[0] || usuario.dados?.email}!</small>
-                    </div>
-                  ) : (
+                  ) : usuario.tipo === 'ponto' ? (
                     <Link 
                       className="nav-link nav-link-custom text-decoration-none" 
                       to="/personalizar-ponto" 
@@ -242,6 +238,10 @@ function Navbar() {
                     >
                       <i className="bi bi-gear me-3"></i>Personalizar Informações
                     </Link>
+                  ) : (
+                    <div className="text-center py-2">
+                      <small className="text-muted">Bem-vindo, {usuario.dados?.nome?.split(' ')[0] || usuario.dados?.email}!</small>
+                    </div>
                   )}
                   <button 
                     className="nav-link w-100 text-start border-0 bg-transparent" 

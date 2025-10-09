@@ -1,7 +1,7 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { database } from '../services/database';
+import { apiService } from '../services/api';
 
 function PersonalizarPonto() {
   const { usuario, logout, loginPonto } = useAuth();
@@ -32,28 +32,32 @@ function PersonalizarPonto() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   useEffect(() => {
-    if (usuario && usuario.dados) {
+    // Verificar se é um ponto logado
+    if (usuario && usuario.tipo === 'ponto' && usuario.dados) {
       setFormData({
         nome: usuario.dados.nome || '',
-        endereco: usuario.dados.endereco || '',
+        endereco: usuario.dados.numero || '',
         cep: usuario.dados.cep || '',
-        cidade: usuario.dados.cidade || '',
+        cidade: usuario.dados.complemento || '',
         telefone: usuario.dados.telefone || '',
-        horario: usuario.dados.horario || '',
-        descricao: usuario.dados.descricao || '',
-        materiais: usuario.dados.materiais || {
-          papel: false,
-          plastico: false,
-          vidro: false,
-          metal: false
+        horario: usuario.dados.horaFuncionamento || '',
+        descricao: '',
+        materiais: {
+          papel: usuario.dados.material?.includes('Papel') || false,
+          plastico: usuario.dados.material?.includes('Plástico') || false,
+          vidro: usuario.dados.material?.includes('Vidro') || false,
+          metal: usuario.dados.material?.includes('Metal') || false
         }
       });
       
       if (usuario.dados.imagemPonto) {
         setPreviewImagem(usuario.dados.imagemPonto);
       }
+    } else {
+      // Se não há ponto logado, redirecionar para login
+      navigate('/login-ponto');
     }
-  }, []);
+  }, [usuario, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -158,44 +162,45 @@ function PersonalizarPonto() {
     setCarregando(true);
     
     try {
-      // Buscar ponto pelo codigo ou email
-      const pontoAtual = database.listarPontos().find(p => 
-        p.codigo === usuario.dados.codigo || p.email === usuario.dados.email
-      );
-      
-      if (!pontoAtual) {
-        alert('Erro: Ponto não encontrado!');
-        setCarregando(false);
-        return;
-      }
-      
+      // Preparar dados para enviar para API
       const dadosParaSalvar = {
-        ...formData,
-        imagemPonto: previewImagem
+        nome: formData.nome,
+        cep: formData.cep,
+        numero: formData.endereco,
+        complemento: formData.cidade,
+        telefone: formData.telefone,
+        horaFuncionamento: formData.horario,
+        material: Object.entries(formData.materiais)
+          .filter(([key, value]) => value)
+          .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
+          .join(', '),
+        email: usuario.dados.email,
+        statusPonto: 'ATIVO'
       };
       
-      const pontoAtualizado = database.atualizarPonto(pontoAtual.id, dadosParaSalvar);
+      await apiService.atualizarPonto(usuario.dados.id, dadosParaSalvar);
       
-      if (pontoAtualizado) {
-        setSucesso(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => setSucesso(false), 3000);
-      } else {
-        alert('Erro ao salvar informações!');
-      }
+      setSucesso(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => setSucesso(false), 3000);
     } catch (error) {
+      console.error('Erro ao salvar:', error);
       alert('Erro ao salvar informações!');
     } finally {
       setCarregando(false);
     }
   };
 
-  const excluirPonto = () => {
+  const excluirPonto = async () => {
     if (window.confirm('Tem certeza que deseja excluir este ponto de coleta? Esta ação não pode ser desfeita.')) {
-      database.excluirPonto(usuario.dados.id);
-      logout();
-      alert('Ponto de coleta excluído com sucesso!');
-      navigate('/');
+      try {
+        await apiService.deletarPonto(usuario.dados.id);
+        logout();
+        alert('Ponto de coleta excluído com sucesso!');
+        navigate('/');
+      } catch (error) {
+        alert('Erro ao excluir ponto: ' + error.message);
+      }
     }
   };
 
@@ -289,70 +294,7 @@ function PersonalizarPonto() {
               </div>
             )}
 
-            {/* Credenciais de Acesso */}
-            <div className="card border-0 shadow-lg hover-lift mb-4 animate-slideInLeft" style={{
-              borderRadius: '25px',
-              background: 'linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(16, 185, 129, 0.03))',
-              backdropFilter: 'blur(20px)'
-            }}>
-              <div className="card-header border-0" style={{
-                background: 'linear-gradient(135deg, #059669, #10b981)',
-                borderRadius: '25px 25px 0 0',
-                padding: '1.5rem'
-              }}>
-                <div>
-                  <h5 className="text-white mb-1 fw-bold">
-                    <i className="bi bi-key me-2" style={{fontSize: '1.3rem'}}></i>
-                    Credenciais de Acesso
-                  </h5>
-                  <p className="text-white-50 mb-0 small">Use estas informações para fazer login</p>
-                </div>
-              </div>
-              <div className="card-body p-4">
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <div className="p-3 rounded-4" style={{background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(5, 150, 105, 0.1)'}}>
-                      <div className="d-flex align-items-center mb-2">
-                        <i className="bi bi-envelope text-success me-2"></i>
-                        <small className="fw-bold text-success">EMAIL</small>
-                      </div>
-                      <p className="mb-0 fw-bold text-dark">{usuario?.dados?.email}</p>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="p-3 rounded-4" style={{background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(5, 150, 105, 0.1)'}}>
-                      <div className="d-flex align-items-center mb-2">
-                        <i className="bi bi-shield-lock text-success me-2"></i>
-                        <small className="fw-bold text-success">SENHA</small>
-                      </div>
-                      <div className="d-flex align-items-center">
-                        <p className="mb-0 fw-bold text-dark me-2">
-                          {mostrarSenha ? usuario?.dados?.senha : '••••••••••'}
-                        </p>
-                        <button 
-                          type="button"
-                          className="btn btn-sm"
-                          onClick={() => setMostrarSenha(!mostrarSenha)}
-                          style={{
-                            background: 'linear-gradient(135deg, #059669, #10b981)',
-                            border: 'none',
-                            borderRadius: '8px',
-                            color: 'white',
-                            fontSize: '12px',
-                            padding: '4px 8px',
-                            transition: 'all 0.3s ease'
-                          }}
-                          onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                          onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                        >
-                          <i className={`bi ${mostrarSenha ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
 
             <div className="card border-0 shadow-lg hover-lift animate-slideInLeft" style={{
               borderRadius: '25px',
@@ -643,94 +585,8 @@ function PersonalizarPonto() {
                     </div>
                   </div>
 
-                  <div className="mt-4">
-                    <div className="form-floating">
-                      <textarea 
-                        className="form-control" 
-                        name="descricao"
-                        id="descricao"
-                        style={{height: '120px'}}
-                        placeholder="Descreva seu ponto de coleta, facilidades, etc..."
-                        value={formData.descricao}
-                        onChange={handleChange}
-                      ></textarea>
-                      <label htmlFor="descricao">
-                        <i className="bi bi-card-text me-2"></i>Descrição do Ponto
-                      </label>
-                    </div>
-                  </div>
-                  
-                  {/* Imagem do Ponto */}
-                  <div className="mt-4">
-                    <div className="card border-0 shadow-sm" style={{borderRadius: '20px', background: 'rgba(5, 150, 105, 0.05)'}}>
-                      <div className="card-body p-4">
-                        <h5 className="text-success fw-bold mb-3">
-                          <i className="bi bi-image me-2"></i>
-                          Foto do Ponto de Coleta
-                        </h5>
-                        
-                        <div className="row align-items-center">
-                          <div className="col-md-6">
-                            <div className="mb-3">
-                              <input 
-                                type="file" 
-                                className="form-control" 
-                                accept="image/*"
-                                onChange={handleImagemChange}
-                                style={{borderRadius: '12px', border: '2px solid #059669'}}
-                              />
-                              <small className="text-muted mt-1 d-block">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</small>
-                            </div>
-                          </div>
-                          <div className="col-md-6">
-                            <div className="text-center">
-                              <div className="position-relative d-inline-block">
-                                {previewImagem ? (
-                                  <img 
-                                    src={previewImagem} 
-                                    alt="Preview" 
-                                    className="rounded-circle shadow-sm"
-                                    style={{width: '150px', height: '150px', objectFit: 'cover', border: '3px solid #059669'}}
-                                  />
-                                ) : (
-                                  <div className="bg-light border rounded-circle d-flex align-items-center justify-content-center" style={{width: '150px', height: '150px', border: '3px dashed #059669 !important'}}>
-                                    <i className="bi bi-image text-success" style={{fontSize: '3rem'}}></i>
-                                  </div>
-                                )}
-                                {previewImagem && (
-                                  <>
-                                    <button 
-                                      type="button"
-                                      className="btn btn-danger btn-sm position-absolute rounded-circle"
-                                      onClick={() => {setPreviewImagem(null); setImagemPonto(null);}}
-                                      style={{width: '30px', height: '30px', top: '0', right: '0', transform: 'translate(10px, -10px)'}}
-                                    >
-                                      <i className="bi bi-x" style={{fontSize: '0.8rem'}}></i>
-                                    </button>
-                                    <button 
-                                      type="button"
-                                      className="btn btn-primary btn-sm position-absolute rounded-circle"
-                                      onClick={() => setMostrarCrop(true)}
-                                      style={{width: '30px', height: '30px', bottom: '0', right: '0', transform: 'translate(10px, 10px)'}}
-                                    >
-                                      <i className="bi bi-crop" style={{fontSize: '0.8rem'}}></i>
-                                    </button>
-                                  </>
-                                )}
-                              </div>
-                              <small className="text-muted mt-2 d-block">Preview circular da imagem</small>
-                              {previewImagem && (
-                                <small className="text-success mt-1 d-block">
-                                  <i className="bi bi-arrows-move me-1"></i>
-                                  Clique no botão para ajustar
-                                </small>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
+
 
 
 

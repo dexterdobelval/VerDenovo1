@@ -39,6 +39,11 @@ public class PontoController {
     public List<Ponto> listarPontos() {
         return pontoRepository.findByStatusPonto("ATIVO");
     }
+    
+    @GetMapping("/todos")
+    public List<Ponto> listarTodosPontos() {
+        return pontoRepository.findAll();
+    }
 
     @PostMapping
     public ResponseEntity<com.verdenovo.api.dto.MessageResponse> criarPonto(@RequestBody Ponto ponto) {
@@ -61,15 +66,46 @@ public class PontoController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<com.verdenovo.api.dto.MessageResponse> atualizarPonto(@PathVariable Long id, @RequestBody Ponto pontoAtualizado) {
+        try {
+            Ponto ponto = pontoRepository.findById(id).orElseThrow(() -> new RuntimeException("Ponto não encontrado"));
+            
+            ponto.setNome(pontoAtualizado.getNome());
+            ponto.setCep(pontoAtualizado.getCep());
+            ponto.setNumero(pontoAtualizado.getNumero());
+            ponto.setComplemento(pontoAtualizado.getComplemento());
+            ponto.setTelefone(pontoAtualizado.getTelefone());
+            ponto.setHoraFuncionamento(pontoAtualizado.getHoraFuncionamento());
+            ponto.setMaterial(pontoAtualizado.getMaterial());
+            
+            pontoRepository.save(ponto);
+            return ResponseEntity.ok(new com.verdenovo.api.dto.MessageResponse("Ponto atualizado com sucesso"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new com.verdenovo.api.dto.MessageResponse("Erro ao atualizar ponto: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<com.verdenovo.api.dto.MessageResponse> alterarStatusPonto(@PathVariable Long id) {
+        try {
+            Ponto ponto = pontoRepository.findById(id).orElseThrow(() -> new RuntimeException("Ponto não encontrado"));
+            String novoStatus = "ATIVO".equals(ponto.getStatusPonto()) ? "INATIVO" : "ATIVO";
+            ponto.setStatusPonto(novoStatus);
+            pontoRepository.save(ponto);
+            return ResponseEntity.ok(new com.verdenovo.api.dto.MessageResponse("Status do ponto alterado com sucesso"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new com.verdenovo.api.dto.MessageResponse("Erro ao alterar status: " + e.getMessage()));
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<com.verdenovo.api.dto.MessageResponse> deletarPonto(@PathVariable Long id) {
         try {
-            Ponto ponto = pontoRepository.findById(id).orElseThrow();
-            ponto.setStatusPonto("INATIVO");
-            pontoRepository.save(ponto);
-            return ResponseEntity.ok(new com.verdenovo.api.dto.MessageResponse("Ponto removido com sucesso"));
+            pontoRepository.deleteById(id);
+            return ResponseEntity.ok(new com.verdenovo.api.dto.MessageResponse("Ponto excluído com sucesso"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new com.verdenovo.api.dto.MessageResponse("Erro ao remover ponto"));
+            return ResponseEntity.badRequest().body(new com.verdenovo.api.dto.MessageResponse("Erro ao excluir ponto"));
         }
     }
     
@@ -90,7 +126,17 @@ public class PontoController {
             
             System.out.println("Login bem-sucedido para: " + request.getEmail());
             String token = jwtUtil.generateToken(ponto.getEmail());
-            PontoResponse pontoResponse = new PontoResponse(ponto.getId(), ponto.getNome(), ponto.getEmail());
+            PontoResponse pontoResponse = new PontoResponse(
+                ponto.getId(), 
+                ponto.getNome(), 
+                ponto.getEmail(),
+                ponto.getCep(),
+                ponto.getNumero(),
+                ponto.getComplemento(),
+                ponto.getTelefone(),
+                ponto.getHoraFuncionamento(),
+                ponto.getMaterial()
+            );
             
             return ResponseEntity.ok(new PontoLoginResponse(token, pontoResponse));
         } catch (Exception e) {

@@ -98,11 +98,28 @@ class ApiService {
   async listarPontos() {
     return await this.request('/pontos');
   }
+  
+  async listarTodosPontos() {
+    return await this.request('/pontos/todos');
+  }
 
   async criarPonto(ponto) {
     return await this.request('/pontos', {
       method: 'POST',
       body: JSON.stringify(ponto),
+    });
+  }
+
+  async atualizarPonto(id, ponto) {
+    return await this.request(`/pontos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(ponto),
+    });
+  }
+
+  async alterarStatusPonto(id) {
+    return await this.request(`/pontos/${id}/status`, {
+      method: 'PUT',
     });
   }
 
@@ -120,6 +137,12 @@ class ApiService {
   // Usuários
   async listarUsuarios() {
     return await this.request('/auth/usuarios');
+  }
+  
+  async alterarStatusUsuario(id) {
+    return await this.request(`/auth/usuarios/${id}/status`, {
+      method: 'PUT',
+    });
   }
   
   async deletarUsuario(id) {

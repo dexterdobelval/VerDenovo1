@@ -14,7 +14,7 @@ function CadastrarPonto() {
     .cadastro-ponto-container {
       min-height: 100vh;
       background: #f8fffe;
-      padding: 20px;
+      padding: 100px 20px 20px 20px;
     }
     .cadastro-ponto-card {
       background: rgba(255, 255, 255, 0.95);
@@ -119,6 +119,11 @@ function CadastrarPonto() {
       
       setMensagem('Ponto cadastrado com sucesso!');
       reset();
+      
+      // Redirecionar para login de ponto após 2 segundos
+      setTimeout(() => {
+        navigate('/login-ponto');
+      }, 2000);
     } catch (error) {
       console.error('Erro:', error);
       setMensagem('Erro ao cadastrar ponto: ' + error.message);
